@@ -22,7 +22,7 @@ const register = async (req: Request, res: Response): Promise<Response> => {
 
     if (emailExists) {
       return res.status(409).json({
-        errors: { email: ["Este email ya está registrado"] },
+        errors: { message: "Este email ya está registrado" },
       });
     }
 
@@ -36,7 +36,7 @@ const register = async (req: Request, res: Response): Promise<Response> => {
 
     if (usernameExists) {
       return res.status(409).json({
-        errors: { username: ["Este nombre de usuario ya está en uso"] },
+        errors: { message: "Este nombre de usuario ya está en uso" },
       });
     }
 
@@ -68,8 +68,8 @@ const register = async (req: Request, res: Response): Promise<Response> => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -100,13 +100,13 @@ const login = async (req: Request, res: Response): Promise<Response> => {
       },
     });
     if (!userFound) {
-      return res.status(409).json({ email: ["Incorrect email"] });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
     const passawordMatch = await bcrypt.compare(password, userFound.password);
 
     if (!passawordMatch) {
-      return res.status(409).json({ password: ["Incorrect password"] });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
     const { accessToken, refreshToken } = await createToken({
@@ -115,8 +115,8 @@ const login = async (req: Request, res: Response): Promise<Response> => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -150,9 +150,8 @@ const logout = async (_: Request, res: Response): Promise<Response> => {
   try {
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      secure: true,
-      maxAge: 0,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
 
     return res.status(200).json({ message: "User logged out successfully" });
@@ -179,9 +178,17 @@ const refreshToken = async (req: Request, res: Response): Promise<Response> => {
       process.env.JWT_REFRESH_SECRET!,
     ) as JwtDecoded;
 
-    const { accessToken } = await createToken({
+    const { accessToken, refreshToken } = await createToken({
       userId: decoded.payload.userId,
     });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     return res.status(200).json({ accessToken });
   } catch (error) {
     return res

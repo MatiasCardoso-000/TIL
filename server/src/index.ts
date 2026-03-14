@@ -2,8 +2,11 @@ import express from "express";
 import cors from "cors";
 import { router as AuthRoutes } from "./routes/auth.routes.js";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
+
 
 const app = express();
+app.use(helmet())
 app.use(cookieParser());
 app.use(express.json());
 app.use(
