@@ -7,3 +7,4 @@ export const router = Router();
 router.post("/create", authenticate, PostsController.createPost);
 
 router.get("/", authenticate, PostsController.getPosts);
+router.get("/:id", authenticate, PostsController.getPostById);
