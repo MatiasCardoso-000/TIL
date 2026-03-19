@@ -71,7 +71,7 @@ const getPosts = async (req: Request, res: Response): Promise<Response> => {
   }
 };
 
-const getPostById = async (req: Request, res: Response) => {
+const getPostById = async (req: Request, res: Response): Promise<Response> => {
   try {
     const id = req.params.id as string;
 
@@ -92,7 +92,7 @@ const getPostById = async (req: Request, res: Response) => {
   }
 };
 
-const updatePost = async (req: Request, res: Response) => {
+const updatePost = async (req: Request, res: Response): Promise<Response> => {
   try {
     const id = req.params.id as string;
 
@@ -126,9 +126,26 @@ const updatePost = async (req: Request, res: Response) => {
   }
 };
 
+const deletePost = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const id = req.params.id as string;
+
+    await prisma.post.delete({
+      where: {
+        id
+      }
+    })
+
+    return res.status(200).json({message:"Post deleted"})
+  } catch (error) {
+    console.log("ERROR DELETING POST", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 export const PostsController = {
   createPost,
   getPosts,
   getPostById,
   updatePost,
+  deletePost
 };
