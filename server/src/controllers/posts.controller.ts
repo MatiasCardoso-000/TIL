@@ -97,6 +97,7 @@ const updatePost = async (req: Request, res: Response) => {
     const id = req.params.id as string;
 
     const { content, category } = req.body;
+    
     if (!content && !category) {
       return res.status(400).json({ message: "At least one field required" });
     }
