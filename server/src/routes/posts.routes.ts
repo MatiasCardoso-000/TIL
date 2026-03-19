@@ -9,3 +9,4 @@ router.post("/create", authenticate, PostsController.createPost);
 router.get("/", authenticate, PostsController.getPosts);
 router.get("/:id", authenticate, PostsController.getPostById);
 router.patch("/:id", authenticate, PostsController.updatePost);
+router.delete("/:id", authenticate, PostsController.deletePost);
