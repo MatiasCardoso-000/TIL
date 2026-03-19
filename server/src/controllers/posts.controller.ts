@@ -78,7 +78,7 @@ const getPostById = async (req: Request, res: Response) => {
     const post = await prisma.post.findUnique({
       where: {
         id,
-      }, 
+      },
     });
 
     if (!post) {
@@ -92,8 +92,43 @@ const getPostById = async (req: Request, res: Response) => {
   }
 };
 
+const updatePost = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+
+    const { content, category } = req.body;
+    if (!content && !category) {
+      return res.status(400).json({ message: "At least one field required" });
+    }
+    const updatedPost = await prisma.post
+      .update({
+        where: {
+          id,
+          userId: req.userId!,
+        },
+        data: {
+          ...(content && { content }),
+          ...(category && { category }),
+        },
+      })
+      .catch((e) => {
+        if (e.code === "P2025") return null;
+        throw e;
+      });
+
+    if (!updatedPost)
+      return res.status(404).json({ message: "Post not found" });
+
+    return res.status(200).json({ updatedPost });
+  } catch (error) {
+    console.log("ERROR UPDATING POST", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const PostsController = {
   createPost,
   getPosts,
   getPostById,
+  updatePost,
 };
