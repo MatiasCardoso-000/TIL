@@ -97,7 +97,7 @@ const updatePost = async (req: Request, res: Response): Promise<Response> => {
     const id = req.params.id as string;
 
     const { content, category } = req.body;
-    
+
     if (!content && !category) {
       return res.status(400).json({ message: "At least one field required" });
     }
@@ -131,13 +131,23 @@ const deletePost = async (req: Request, res: Response): Promise<Response> => {
   try {
     const id = req.params.id as string;
 
-    await prisma.post.delete({
-      where: {
-        id
-      }
-    })
+    const deletedPost = await prisma.post
+      .delete({
+        where: {
+          id,
+          userId: req.userId!,
+        },
+      })
+      .catch((e) => {
+        if (e.code === "P2025") return null;
+        throw e;
+      });
 
-    return res.status(200).json({message:"Post deleted"})
+    if (!deletedPost) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    return res.status(200).json({ message: "Post deleted" });
   } catch (error) {
     console.log("ERROR DELETING POST", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -148,5 +158,5 @@ export const PostsController = {
   getPosts,
   getPostById,
   updatePost,
-  deletePost
+  deletePost,
 };
