@@ -1,5 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+import FeedPage from './pages/FeedPage'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { accessToken } = useAuth()
@@ -9,13 +12,13 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <Routes>
-      <Route path="/login" element={<div>Login</div>} />
-      <Route path="/register" element={<div>Register</div>} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
       <Route
         path="/"
         element={
           <PrivateRoute>
-            <div>Feed</div>
+            <FeedPage />
           </PrivateRoute>
         }
       />

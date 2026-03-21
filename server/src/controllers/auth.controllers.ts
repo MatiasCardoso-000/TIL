@@ -120,18 +120,15 @@ const login = async (req: Request, res: Response): Promise<Response> => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    const userWithoutPassword = {
+    const user = {
+      id: userFound.id,
       username: userFound.username,
       email: userFound.email,
-      avatar: userFound.avatarUrl,
-      id: userFound.id,
-      bio: userFound.bio,
-      createdAt: userFound.createdAt,
     };
 
     return res.status(200).json({
       message: "User logged in",
-      userWithoutPassword,
+      user,
       accessToken,
     });
   } catch (error) {
