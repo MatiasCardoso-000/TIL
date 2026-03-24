@@ -6,12 +6,6 @@ const createPost = async (req: Request, res: Response): Promise<Response> => {
     const { content, category } = req.body;
     const userId = req.userId!;
 
-    if (!content || !category) {
-      return res
-        .status(400)
-        .json({ message: "content and category are required" });
-    }
-
     const post = await prisma.post.create({
       data: { content, category, userId },
       select: {
@@ -78,6 +72,18 @@ const getPostById = async (req: Request, res: Response): Promise<Response> => {
     const post = await prisma.post.findUnique({
       where: {
         id,
+      },
+      select: {
+        id: true,
+        content: true,
+        category: true,
+        createdAt: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
       },
     });
 

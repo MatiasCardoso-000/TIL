@@ -6,6 +6,7 @@ import type { RegisterInput } from "../schemas/auth.schemas.js";
 import { createToken } from "../utils/createToken.js";
 import jwt from "jsonwebtoken";
 import type { JwtDecoded } from "../types/types.js";
+import { refreshCookieOptions } from "../utils/cookieOptions.js";
 
 // ------------------------------------------------------------- //
 // ------------------------------------------------------------- //
@@ -15,63 +16,36 @@ const register = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { username, email, password } = req.body as RegisterInput;
 
-    //Verificar si el email ya existe
-    const emailExists = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (emailExists) {
-      return res.status(409).json({
-        errors: { message: "Este email ya está registrado" },
-      });
-    }
-
-    //Verificar si username existe
-
-    const usernameExists = await prisma.user.findUnique({
-      where: {
-        username,
-      },
-    });
-
-    if (usernameExists) {
-      return res.status(409).json({
-        errors: { message: "Este nombre de usuario ya está en uso" },
-      });
-    }
-
     //Hashear la contraseña
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
     //Crear el usuario en la BD
 
-    const user = await prisma.user.create({
-      data: {
-        username,
-        email,
-        password: hashedPassword,
-      },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        createdAt: true,
-      },
-    });
-
+    let user;
+    try {
+      user = await prisma.user.create({
+        data: { username, email, password: hashedPassword },
+        select: { id: true, username: true, email: true, createdAt: true },
+      });
+    } catch (error: any) {
+      if (error.code === "P2002") {
+        const field = error.meta?.target?.includes("email")
+          ? "email"
+          : "username";
+        return res
+          .status(409)
+          .json({ message: `Este ${field} ya está en uso` });
+      }
+      throw error;
+    }
     //Generar JWT
 
     const { accessToken, refreshToken } = await createToken({
       userId: user.id,
     });
 
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie("refreshToken", refreshToken, refreshCookieOptions);
 
     //Responder con el usuario y el token
 
@@ -113,12 +87,7 @@ const login = async (req: Request, res: Response): Promise<Response> => {
       userId: userFound.id,
     });
 
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie("refreshToken", refreshToken, refreshCookieOptions);
 
     const user = {
       id: userFound.id,
@@ -145,11 +114,7 @@ const login = async (req: Request, res: Response): Promise<Response> => {
 
 const logout = async (_: Request, res: Response): Promise<Response> => {
   try {
-    res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    });
+    res.clearCookie("refreshToken", refreshCookieOptions);
 
     return res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
@@ -175,16 +140,26 @@ const refreshToken = async (req: Request, res: Response): Promise<Response> => {
       process.env.JWT_REFRESH_SECRET!,
     ) as JwtDecoded;
 
+    const userExists = await prisma.user.findUnique({
+      where: {
+        id: decoded.payload.userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!userExists) {
+      return res
+        .status(401)
+        .json({ message: "Invalid or expired refresh token" });
+    }
+
     const { accessToken, refreshToken } = await createToken({
       userId: decoded.payload.userId,
     });
 
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie("refreshToken", refreshToken, refreshCookieOptions);
 
     return res.status(200).json({ accessToken });
   } catch (error) {

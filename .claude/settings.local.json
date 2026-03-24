@@ -7,7 +7,12 @@
       "mcp__claude_ai_Postman__getCollection",
       "mcp__claude_ai_Postman__putCollection",
       "Bash(npx prisma:*)",
-      "Bash(npx dotenv:*)"
+      "Bash(npx dotenv:*)",
+      "mcp__plugin_engram_engram__mem_search",
+      "mcp__plugin_engram_engram__mem_context",
+      "mcp__plugin_engram_engram__mem_save",
+      "mcp__plugin_engram_engram__mem_get_observation",
+      "mcp__plugin_engram_engram__mem_session_summary"
     ]
   }
 }

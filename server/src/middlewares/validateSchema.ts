@@ -11,7 +11,7 @@ export const validateSchema =
           .status(400)
           .json({ errors: result.error.flatten().fieldErrors });
       }
-      next();
+      return next();
     } catch (error) {
       return res.status(500).json({ errors: ["Internal server error"] });
     }
