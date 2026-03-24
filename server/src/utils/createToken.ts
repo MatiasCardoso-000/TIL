@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import type { payloadType } from "../types/types.js";
 
-export const createToken = async (payload: payloadType) => {
+export const createToken = (payload: payloadType) => {
   if (!process.env.JWT_ACCESS_SECRET || !process.env.JWT_REFRESH_SECRET) {
     throw new Error("Secret key for the token are not provided");
   }

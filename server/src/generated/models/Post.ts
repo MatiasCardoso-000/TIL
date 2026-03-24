@@ -29,6 +29,7 @@ export type PostMinAggregateOutputType = {
   content: string | null
   category: $Enums.Category | null
   createdAt: Date | null
+  updatedAt: Date | null
   userId: string | null
 }
 
@@ -37,6 +38,7 @@ export type PostMaxAggregateOutputType = {
   content: string | null
   category: $Enums.Category | null
   createdAt: Date | null
+  updatedAt: Date | null
   userId: string | null
 }
 
@@ -45,6 +47,7 @@ export type PostCountAggregateOutputType = {
   content: number
   category: number
   createdAt: number
+  updatedAt: number
   userId: number
   _all: number
 }
@@ -55,6 +58,7 @@ export type PostMinAggregateInputType = {
   content?: true
   category?: true
   createdAt?: true
+  updatedAt?: true
   userId?: true
 }
 
@@ -63,6 +67,7 @@ export type PostMaxAggregateInputType = {
   content?: true
   category?: true
   createdAt?: true
+  updatedAt?: true
   userId?: true
 }
 
@@ -71,6 +76,7 @@ export type PostCountAggregateInputType = {
   content?: true
   category?: true
   createdAt?: true
+  updatedAt?: true
   userId?: true
   _all?: true
 }
@@ -152,6 +158,7 @@ export type PostGroupByOutputType = {
   content: string
   category: $Enums.Category
   createdAt: Date
+  updatedAt: Date
   userId: string
   _count: PostCountAggregateOutputType | null
   _min: PostMinAggregateOutputType | null
@@ -181,6 +188,7 @@ export type PostWhereInput = {
   content?: Prisma.StringFilter<"Post"> | string
   category?: Prisma.EnumCategoryFilter<"Post"> | $Enums.Category
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   userId?: Prisma.StringFilter<"Post"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
@@ -190,6 +198,7 @@ export type PostOrderByWithRelationInput = {
   content?: Prisma.SortOrder
   category?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
 }
@@ -202,6 +211,7 @@ export type PostWhereUniqueInput = Prisma.AtLeast<{
   content?: Prisma.StringFilter<"Post"> | string
   category?: Prisma.EnumCategoryFilter<"Post"> | $Enums.Category
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   userId?: Prisma.StringFilter<"Post"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
@@ -211,6 +221,7 @@ export type PostOrderByWithAggregationInput = {
   content?: Prisma.SortOrder
   category?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   _count?: Prisma.PostCountOrderByAggregateInput
   _max?: Prisma.PostMaxOrderByAggregateInput
@@ -225,6 +236,7 @@ export type PostScalarWhereWithAggregatesInput = {
   content?: Prisma.StringWithAggregatesFilter<"Post"> | string
   category?: Prisma.EnumCategoryWithAggregatesFilter<"Post"> | $Enums.Category
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Post"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Post"> | Date | string
   userId?: Prisma.StringWithAggregatesFilter<"Post"> | string
 }
 
@@ -233,6 +245,7 @@ export type PostCreateInput = {
   content: string
   category: $Enums.Category
   createdAt?: Date | string
+  updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutPostsInput
 }
 
@@ -241,6 +254,7 @@ export type PostUncheckedCreateInput = {
   content: string
   category: $Enums.Category
   createdAt?: Date | string
+  updatedAt?: Date | string
   userId: string
 }
 
@@ -249,6 +263,7 @@ export type PostUpdateInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
 }
 
@@ -257,6 +272,7 @@ export type PostUncheckedUpdateInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -265,6 +281,7 @@ export type PostCreateManyInput = {
   content: string
   category: $Enums.Category
   createdAt?: Date | string
+  updatedAt?: Date | string
   userId: string
 }
 
@@ -273,6 +290,7 @@ export type PostUpdateManyMutationInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PostUncheckedUpdateManyInput = {
@@ -280,6 +298,7 @@ export type PostUncheckedUpdateManyInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -298,6 +317,7 @@ export type PostCountOrderByAggregateInput = {
   content?: Prisma.SortOrder
   category?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -306,6 +326,7 @@ export type PostMaxOrderByAggregateInput = {
   content?: Prisma.SortOrder
   category?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -314,6 +335,7 @@ export type PostMinOrderByAggregateInput = {
   content?: Prisma.SortOrder
   category?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -368,6 +390,7 @@ export type PostCreateWithoutUserInput = {
   content: string
   category: $Enums.Category
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type PostUncheckedCreateWithoutUserInput = {
@@ -375,6 +398,7 @@ export type PostUncheckedCreateWithoutUserInput = {
   content: string
   category: $Enums.Category
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type PostCreateOrConnectWithoutUserInput = {
@@ -411,6 +435,7 @@ export type PostScalarWhereInput = {
   content?: Prisma.StringFilter<"Post"> | string
   category?: Prisma.EnumCategoryFilter<"Post"> | $Enums.Category
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   userId?: Prisma.StringFilter<"Post"> | string
 }
 
@@ -419,6 +444,7 @@ export type PostCreateManyUserInput = {
   content: string
   category: $Enums.Category
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type PostUpdateWithoutUserInput = {
@@ -426,6 +452,7 @@ export type PostUpdateWithoutUserInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PostUncheckedUpdateWithoutUserInput = {
@@ -433,6 +460,7 @@ export type PostUncheckedUpdateWithoutUserInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PostUncheckedUpdateManyWithoutUserInput = {
@@ -440,6 +468,7 @@ export type PostUncheckedUpdateManyWithoutUserInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -449,6 +478,7 @@ export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   content?: boolean
   category?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["post"]>
@@ -458,6 +488,7 @@ export type PostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   content?: boolean
   category?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["post"]>
@@ -467,6 +498,7 @@ export type PostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   content?: boolean
   category?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["post"]>
@@ -476,10 +508,11 @@ export type PostSelectScalar = {
   content?: boolean
   category?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
   userId?: boolean
 }
 
-export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "category" | "createdAt" | "userId", ExtArgs["result"]["post"]>
+export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "category" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["post"]>
 export type PostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -500,6 +533,7 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     content: string
     category: $Enums.Category
     createdAt: Date
+    updatedAt: Date
     userId: string
   }, ExtArgs["result"]["post"]>
   composites: {}
@@ -929,6 +963,7 @@ export interface PostFieldRefs {
   readonly content: Prisma.FieldRef<"Post", 'String'>
   readonly category: Prisma.FieldRef<"Post", 'Category'>
   readonly createdAt: Prisma.FieldRef<"Post", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Post", 'DateTime'>
   readonly userId: Prisma.FieldRef<"Post", 'String'>
 }
     
@@ -1126,6 +1161,11 @@ export type PostFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Skip the first `n` Posts.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Posts.
+   */
   distinct?: Prisma.PostScalarFieldEnum | Prisma.PostScalarFieldEnum[]
 }
 

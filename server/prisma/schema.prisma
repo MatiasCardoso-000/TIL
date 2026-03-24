@@ -18,8 +18,9 @@ model User {
   bio         String?
   avatarUrl   String?
   createdAt   DateTime @default(now())
-
+  updatedAt   DateTime @updatedAt
   posts       Post[]
+  refreshTokens RefreshToken[]
 
   @@map("users")
 }
@@ -32,11 +33,22 @@ model Post {
   content     String     @db.VarChar(280)
   category    Category
   createdAt   DateTime   @default(now())
-
+  updatedAt   DateTime   @updatedAt
   userId      String
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("posts")
+}
+
+model RefreshToken {
+  id          String     @id @default(cuid())
+  hashedToken String     @db.VarChar(64) @unique
+  createdAt   DateTime   @default(now())
+  expiresAt   DateTime   
+  isRevoked   Boolean    @default(false)
+  userId      String
+  user        User       @relation(fields: [userId],references:[id],onDelete: Cascade)
+  @@map("refresh_tokens")
 }
 
 // ─────────────────────────────────────────

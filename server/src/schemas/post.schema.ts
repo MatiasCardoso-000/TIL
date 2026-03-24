@@ -1,25 +1,14 @@
 import { z } from "zod";
+import { Category } from "../generated/enums.js";
 
-const CATEGORIES = [
-  "TECNOLOGIA",
-  "CIENCIA",
-  "HISTORIA",
-  "IDIOMAS",
-  "MATEMATICAS",
-  "ARTE",
-  "SALUD",
-  "NEGOCIOS",
-  "OTRO",
-];
+const categorySchema = z.enum(Category,{
+    error: "La categoria es requerida",
+  })
 
 const contentSchema = z
   .string({ error: "El contenido es requerido" })
   .min(10, "El contenido debe tener al menos 10 caracteres")
   .max(280, "El contenido no puede superar los 280 caracteres");
-
-const categorySchema = z.enum(CATEGORIES, {
-  error: "La categoria es requerida",
-});
 
 export const createPostSchema = z.object({
   content: contentSchema,

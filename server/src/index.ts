@@ -6,6 +6,7 @@ import { router as AuthRoutes } from "./routes/auth.routes.js";
 import { router as PostsRoutes } from "./routes/posts.routes.js";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
+import prisma from "./lib/prisma.js";
 
 const app = express();
 app.use(helmet());
@@ -28,4 +29,9 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
+});
+
+process.on("SIGTERM", async () => {
+  await prisma.$disconnect();
+  process.exit(0);
 });

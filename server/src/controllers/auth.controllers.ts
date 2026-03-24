@@ -7,6 +7,8 @@ import { createToken } from "../utils/createToken.js";
 import jwt from "jsonwebtoken";
 import type { JwtDecoded } from "../types/types.js";
 import { refreshCookieOptions } from "../utils/cookieOptions.js";
+import { Prisma } from "../generated/client.js";
+import { hashToken } from "../utils/hashToken.js";
 
 // ------------------------------------------------------------- //
 // ------------------------------------------------------------- //
@@ -28,9 +30,12 @@ const register = async (req: Request, res: Response): Promise<Response> => {
         data: { username, email, password: hashedPassword },
         select: { id: true, username: true, email: true, createdAt: true },
       });
-    } catch (error: any) {
-      if (error.code === "P2002") {
-        const field = error.meta?.target?.includes("email")
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        const field = (error.meta?.target as string[])?.includes("email")
           ? "email"
           : "username";
         return res
@@ -41,8 +46,18 @@ const register = async (req: Request, res: Response): Promise<Response> => {
     }
     //Generar JWT
 
-    const { accessToken, refreshToken } = await createToken({
+    const { accessToken, refreshToken } = createToken({
       userId: user.id,
+    });
+
+    const hashedToken = hashToken(refreshToken);
+
+    await prisma.refreshToken.create({
+      data: {
+        hashedToken,
+        userId: user.id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
     });
 
     res.cookie("refreshToken", refreshToken, refreshCookieOptions);
@@ -83,8 +98,18 @@ const login = async (req: Request, res: Response): Promise<Response> => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const { accessToken, refreshToken } = await createToken({
+    const { accessToken, refreshToken } = createToken({
       userId: userFound.id,
+    });
+
+    const hashedToken = hashToken(refreshToken);
+
+    await prisma.refreshToken.create({
+      data: {
+        hashedToken,
+        userId: userFound.id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
     });
 
     res.cookie("refreshToken", refreshToken, refreshCookieOptions);
@@ -112,8 +137,25 @@ const login = async (req: Request, res: Response): Promise<Response> => {
 // ------------------------------------------------------------- //
 // ------------------------------------------------------------- //
 
-const logout = async (_: Request, res: Response): Promise<Response> => {
+const logout = async (req: Request, res: Response): Promise<Response> => {
   try {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      return res.status(401).json({ message: "No refresh token" });
+    }
+
+    const hashedToken = hashToken(refreshToken);
+
+    await prisma.refreshToken.update({
+      where: {
+        hashedToken,
+      },
+      data: {
+        isRevoked: true,
+      },
+    });
+
     res.clearCookie("refreshToken", refreshCookieOptions);
 
     return res.status(200).json({ message: "User logged out successfully" });
@@ -140,25 +182,55 @@ const refreshToken = async (req: Request, res: Response): Promise<Response> => {
       process.env.JWT_REFRESH_SECRET!,
     ) as JwtDecoded;
 
-    const userExists = await prisma.user.findUnique({
+    const tokenInDb = await prisma.refreshToken.findUnique({
       where: {
-        id: decoded.payload.userId,
-      },
-      select: {
-        id: true,
+        hashedToken: hashToken(token),
+        isRevoked: false,
       },
     });
 
-    if (!userExists) {
-      return res
-        .status(401)
-        .json({ message: "Invalid or expired refresh token" });
+    if (!tokenInDb || tokenInDb.isRevoked || tokenInDb.expiresAt < new Date()) {
+      return res.status(401).json({ message: "Invalid token" });
     }
 
-    const { accessToken, refreshToken } = await createToken({
+    const { accessToken, refreshToken } = createToken({
       userId: decoded.payload.userId,
     });
 
+    const hashedNew = hashToken(refreshToken);
+
+    await Promise.all([
+      prisma.refreshToken.update({
+        where: {
+          id: tokenInDb.id,
+        },
+        data: {
+          isRevoked: true,
+        },
+      }),
+      prisma.refreshToken.create({
+        data: {
+          hashedToken: hashedNew,
+          userId: tokenInDb.userId,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
+      }),
+    ]);
+
+    await prisma.refreshToken.deleteMany({
+      where: {
+        userId: tokenInDb.userId,
+        OR: [
+          { isRevoked: true },
+          {
+            expiresAt: {
+              // lt = less than
+              lt: new Date(),
+            },
+          },
+        ],
+      },
+    });
     res.cookie("refreshToken", refreshToken, refreshCookieOptions);
 
     return res.status(200).json({ accessToken });
