@@ -13,7 +13,8 @@
       "mcp__plugin_engram_engram__mem_save",
       "mcp__plugin_engram_engram__mem_get_observation",
       "mcp__plugin_engram_engram__mem_session_summary",
-      "Bash(find /c/Users/matia/Desktop/TIL/server -name .env* -o -name *.env)"
+      "Bash(find /c/Users/matia/Desktop/TIL/server -name .env* -o -name *.env)",
+      "Bash(find /c/Users/matia/Desktop/TIL/server/src -type f \\\\\\(-name *.ts -o -name *.prisma \\\\\\))"
     ]
   }
 }

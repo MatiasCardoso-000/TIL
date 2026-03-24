@@ -13,12 +13,18 @@ const createPost = async (req: Request, res: Response): Promise<Response> => {
         content: true,
         category: true,
         createdAt: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
       },
     });
 
     return res.status(201).json({ message: "Post created", post });
   } catch (error) {
-    console.log("POST CREATION ERROR", error);
+    console.error("[POST CREATION ERROR]", error);
     return res.status(500).json({
       message: "Error interno del servidor",
     });
@@ -60,7 +66,7 @@ const getPosts = async (req: Request, res: Response): Promise<Response> => {
       },
     });
   } catch (error) {
-    console.log("ERROR GETTING POSTS", error);
+    console.error("[ERROR GETTING POSTS]", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -93,7 +99,7 @@ const getPostById = async (req: Request, res: Response): Promise<Response> => {
 
     return res.status(200).json({ post });
   } catch (error) {
-    console.log("ERROR GETTING POST", error);
+    console.error("[ERROR GETTING POST]", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -128,7 +134,7 @@ const updatePost = async (req: Request, res: Response): Promise<Response> => {
 
     return res.status(200).json({ updatedPost });
   } catch (error) {
-    console.log("ERROR UPDATING POST", error);
+    console.error("[ERROR UPDATING POST]", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -155,7 +161,7 @@ const deletePost = async (req: Request, res: Response): Promise<Response> => {
 
     return res.status(200).json({ message: "Post deleted" });
   } catch (error) {
-    console.log("ERROR DELETING POST", error);
+    console.error("[ERROR DELETING POST]", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

@@ -19,6 +19,10 @@ app.use(
   }),
 );
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 app.use("/api", AuthRoutes);
 app.use("/api/posts", PostsRoutes);
 
@@ -26,6 +30,25 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(["ERROR HANDLING"], err);
   return res.status(500).json({ message: "Algo salió mal" });
 });
+
+function validateEnv() {
+  const required = [
+    "DATABASE_URL",
+    "JWT_ACCESS_SECRET",
+    "JWT_REFRESH_SECRET",
+    "PORT",
+    "CLIENT_URL",
+  ];
+
+  for (const key of required) {
+    if (!process.env[key]) {
+      console.error(`Missing env var: ${key}`);
+      process.exit(1);
+    }
+  }
+}
+
+validateEnv();
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
