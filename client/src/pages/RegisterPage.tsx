@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
-import { useAuth } from '../context/AuthContext'
 import { apiFetch } from '../lib/api'
+import { useAuth } from '../hooks/useAuth'
 
 interface RegisterResponse {
   user: { id: string; username: string; email: string }

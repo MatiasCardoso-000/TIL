@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useAuth } from '../context/AuthContext'
 import { useApi } from '../lib/useApi'
 import { apiFetch } from '../lib/api'
+import { useAuth } from '../hooks/useAuth'
 
 const CATEGORIES = [
   { value: 'TECNOLOGIA', label: 'Tecnología' },
