@@ -5,7 +5,8 @@ import FeedPage from './pages/FeedPage'
 import { useAuth } from './hooks/useAuth'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const { accessToken } = useAuth()
+  const { accessToken, isInitializing } = useAuth()
+  if (isInitializing) return null
   return accessToken ? <>{children}</> : <Navigate to="/login" replace />
 }
 
