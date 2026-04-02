@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AuthContext, type AuthState, type User } from "./AuthContext";
+import { apiFetch} from "../lib/api";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [auth, setAuth] = useState<AuthState>({
@@ -7,6 +8,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     accessToken: null,
   });
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
+  const initialized = useRef(false);
 
   const login = (user: User, accessToken: string) => {
     setAuth({ user, accessToken });
@@ -17,36 +19,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
+    if (initialized.current) return;
+    initialized.current = true;
+
+   
 
     const checkLogin = async () => {
       try {
-        const tokenResponse = await fetch(
-          "/api/refresh-token",
+        const token = await apiFetch<{ accessToken: string }>(
+          `/refresh-token`,
           {
-            signal,
             method: "POST",
-            credentials: "include",
           },
         );
-        const token = await tokenResponse.json();
 
-        if (!tokenResponse.ok) {
-          console.warn("[AuthProvider] No active session");
-          return;
-        }
-
-        const userResponse = await fetch("/api/me", {
-          signal,
+        const user = await apiFetch<User>(`/me`, {
           method: "GET",
-          credentials: "include",
           headers: {
             Authorization: `Bearer ${token.accessToken}`,
           },
         });
 
-        const user = await userResponse.json();
         setAuth({ user, accessToken: token.accessToken });
       } catch (error: any) {
         if (error.name === "AbortError") return;
@@ -56,9 +49,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     checkLogin();
 
-    return () => {
-      controller.abort();
-    };
   }, []);
 
   return (

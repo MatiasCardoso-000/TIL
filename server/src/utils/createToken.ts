@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import type { payloadType } from "../types/types.js";
 
 export const createToken = (payload: payloadType) => {
@@ -9,9 +10,15 @@ export const createToken = (payload: payloadType) => {
   const accessToken = jwt.sign({ payload }, process.env.JWT_ACCESS_SECRET, {
     expiresIn: "15m",
   });
-  const refreshToken = jwt.sign({ payload }, process.env.JWT_REFRESH_SECRET, {
+  const refreshJti = crypto.randomUUID();
+
+  const refreshToken = jwt.sign(
+    { payload, jti: refreshJti },
+    process.env.JWT_REFRESH_SECRET,
+    {
     expiresIn: "7d",
-  });
+    },
+  );
 
   return {
     accessToken,

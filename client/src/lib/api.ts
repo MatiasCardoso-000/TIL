@@ -1,4 +1,4 @@
-const BASE_URL = '/api'
+export const BASE_URL = '/api'
 
 export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
@@ -9,9 +9,9 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
     },
     ...options,
   })
-
+  
   const body = await res.json().catch(() => ({}))
-
+  
   if (!res.ok) {
     throw new Error(body.message ?? 'Request failed')
   }

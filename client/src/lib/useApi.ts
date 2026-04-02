@@ -8,7 +8,7 @@ export function useApi() {
     return apiFetch<T>(path, {
       ...options,
       headers: {
-        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : null),
         ...options?.headers,
       },
     })
