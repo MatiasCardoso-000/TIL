@@ -1,9 +1,12 @@
-import { createContext} from "react";
+import { createContext } from "react";
 
 export interface User {
   id: string;
   username: string;
   email: string;
+  avatarUrl: true;
+  bio: true;
+  createdAt: true;
 }
 
 export interface AuthState {

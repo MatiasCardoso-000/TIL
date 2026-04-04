@@ -5,7 +5,7 @@ import prisma from "../lib/prisma.js";
 import type { RegisterInput } from "../schemas/auth.schemas.js";
 import { createToken } from "../utils/createToken.js";
 import jwt from "jsonwebtoken";
-import type { JwtDecoded } from "../types/types.js";
+import type { JwtDecoded, User } from "../types/types.js";
 import { refreshCookieOptions } from "../utils/cookieOptions.js";
 import { Prisma } from "../generated/client.js";
 import { hashToken } from "../utils/hashToken.js";
@@ -241,19 +241,19 @@ const refreshToken = async (req: Request, res: Response): Promise<Response> => {
 
     return res.status(200).json({ accessToken });
   } catch (error) {
-    console.error("[REFRESH TOKEN ERROR]",error);
-    
+    console.error("[REFRESH TOKEN ERROR]", error);
+
     return res
       .status(401)
       .json({ message: "Invalid or expired refresh token" });
   }
 };
 
-const me = async (req: Request, res: Response): Promise<Response> => {
+const me = async (req: Request, res: Response): Promise<Response<User>> => {
   try {
-    const user = await prisma.user.findUnique({
+    const user= await prisma.user.findUnique({
       where: { id: req.userId! },
-      select: {
+      select: { 
         id: true,
         username: true,
         email: true,
@@ -267,7 +267,7 @@ const me = async (req: Request, res: Response): Promise<Response> => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    return res.status(200).json({ user });
+    return res.status(200).json(user);
   } catch (error) {
     console.error("[ME ERROR]", error);
     return res.status(500).json({ message: "Internal Server Error" });

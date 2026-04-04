@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AuthContext, type AuthState, type User } from "./AuthContext";
-import { apiFetch} from "../lib/api";
+import { apiFetch } from "../lib/api";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [auth, setAuth] = useState<AuthState>({
@@ -21,8 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
-
-   
+    const controller = new AbortController();
 
     const checkLogin = async () => {
       try {
@@ -49,6 +48,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     checkLogin();
 
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   return (
