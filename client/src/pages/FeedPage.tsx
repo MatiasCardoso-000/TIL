@@ -5,9 +5,6 @@ import Header from "../components/Header";
 import Form from "../components/Form";
 import type { PostsResponse } from "../types/types";
 
-
-
-
 function timeAgo(dateStr: string): string {
   const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
   if (diff < 60) return "ahora";
@@ -60,6 +57,9 @@ function FeedPage() {
           from { opacity: 0; }
           to   { opacity: 1; }
         }
+
+        
+
         .til-bg {
           background-color: #0b0b0f;
           background-image: radial-gradient(circle at 1px 1px, #16161f 1px, transparent 0);

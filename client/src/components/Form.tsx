@@ -3,12 +3,15 @@ import { useApi } from "../lib/useApi";
 import type { PostsResponse } from "../types/types";
 import { usePosts } from "../hooks/usePosts";
 import { useState } from "react";
+import "../index.css";
 
 export default function Form() {
   const MAX_CHARS = 280;
   const authFetch = useApi();
   const { content, category, setContent, setCategory } = usePosts();
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
@@ -24,7 +27,7 @@ export default function Form() {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = content.trim();
     if (trimmed.length < 10) {
@@ -32,7 +35,14 @@ export default function Form() {
       return;
     }
     setError("");
-    createMutation.mutate();
+    setIsSubmitting(true);
+
+    try {
+      await createMutation.mutateAsync();
+      await new Promise((r) => setTimeout(r, 500));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const charsLeft = MAX_CHARS - content.length;
@@ -104,7 +114,18 @@ export default function Form() {
             disabled={!content.trim() || createMutation.isPending}
             className="til-btn-publish"
           >
-            {createMutation.isPending ? "Publicando..." : "Publicar →"}
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
+            >
+              {isSubmitting && (
+                <span className="til-spinner" aria-hidden="true" />
+              )}
+              {isSubmitting ? "Publicando..." : "Publicar →"}
+            </span>
           </button>
         </div>
       </div>
