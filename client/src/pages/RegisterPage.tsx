@@ -9,6 +9,10 @@ interface RegisterResponse {
   accessToken: string;
 }
 
+type ErrorType = Error & {
+  data?: unknown;
+};
+
 function EyeIcon({ open }: { open: boolean }) {
   if (open) {
     return (
@@ -67,6 +71,8 @@ function RegisterPage() {
   const [fieldErrors, setFieldErrors] = useState<{
     password?: string[];
     confirmPassword?: string[];
+    username?: string[];
+    _general?:string[]
   }>({});
   useEffect(() => {
     const link = document.createElement("link");
@@ -90,8 +96,11 @@ function RegisterPage() {
       navigate("/");
       setFieldErrors({});
     },
-    onError: (err: any) => {
-      setFieldErrors(err?.data.errors ?? {});
+    onError: (err: ErrorType) => {
+      setFieldErrors(
+        (err.data as { errors?: Record<string, string[]> })?.errors ??
+          {},
+      );
     },
   });
 
@@ -229,7 +238,7 @@ function RegisterPage() {
           />
 
           {/* Form */}
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} noValidate>
             <div className="fade-3" style={{ marginBottom: "24px" }}>
               <label
                 style={{
@@ -399,24 +408,41 @@ function RegisterPage() {
                     color: "#e85547",
                     margin: 0,
                   }}
-                >
-                  {fieldErrors.password?.map((msg) => (
-                    <p
-                      key={msg}
-                      style={{ color: "#e85547", fontSize: "11px", margin: 0 }}
-                    >
-                      {msg}
-                    </p>
-                  ))}
-                  {fieldErrors.confirmPassword?.map((msg) => (
-                    <p
-                      key={msg}
-                      style={{ color: "#e85547", fontSize: "11px", margin: 0 }}
-                    >
-                      {msg}
-                    </p>
-                  ))}
-                </p>
+                ></p>
+
+                {fieldErrors.password?.map((msg) => (
+                  <p
+                    key={msg}
+                    style={{ color: "#e85547", fontSize: "11px", margin: 0 }}
+                  >
+                    {msg}
+                  </p>
+                ))}
+                {fieldErrors.confirmPassword?.map((msg) => (
+                  <p
+                    key={msg}
+                    style={{ color: "#e85547", fontSize: "11px", margin: 0 }}
+                  >
+                    {msg}
+                  </p>
+                ))}
+                {fieldErrors.username?.map((msg) => (
+                  <p
+                    key={msg}
+                    style={{ color: "#e85547", fontSize: "11px", margin: 0 }}
+                  >
+                    {msg}
+                  </p>
+                ))}
+
+                {fieldErrors._general?.map((msg) => (
+                  <p
+                    key={msg}
+                    style={{ color: "#e85547", fontSize: "11px", margin: 0 }}
+                  >
+                    {msg}
+                  </p>
+                ))}
               </div>
             )}
 

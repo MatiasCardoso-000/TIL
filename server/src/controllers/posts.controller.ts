@@ -5,7 +5,6 @@ const createPost = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { content, category } = req.body;
     const userId = req.userId!;
-    console.log(content,category);
     
     const post = await prisma.post.create({
       data: { content, category, userId },

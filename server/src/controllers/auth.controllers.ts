@@ -40,7 +40,7 @@ const register = async (req: Request, res: Response): Promise<Response> => {
           : "username";
         return res
           .status(409)
-          .json({ message: `Este ${field} ya está en uso` });
+          .json({ errors:{ _general: [`Este ${field} ya está en uso`] }});
       }
       throw error;
     }
@@ -72,7 +72,7 @@ const register = async (req: Request, res: Response): Promise<Response> => {
   } catch (error) {
     console.error("[REGISTER ERROR]", error);
     return res.status(500).json({
-      message: "Error interno del servidor",
+      errors: "Error interno del servidor",
     });
   }
 };
@@ -95,13 +95,13 @@ const login = async (req: Request, res: Response): Promise<Response> => {
     if (!userFound) {
       await bcrypt.compare(password, DUMMY_HASH);
 
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ errors: "Invalid credentials" });
     }
 
     const passwordMatch = await bcrypt.compare(password, userFound.password);
 
     if (!passwordMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ errors: "Invalid credentials" });
     }
 
     const { accessToken, refreshToken } = createToken({
@@ -134,7 +134,7 @@ const login = async (req: Request, res: Response): Promise<Response> => {
   } catch (error) {
     console.error("[LOGIN ERROR]", error);
     return res.status(500).json({
-      message: "Error interno del servidor",
+      errors: "Error interno del servidor",
     });
   }
 };
@@ -148,7 +148,7 @@ const logout = async (req: Request, res: Response): Promise<Response> => {
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
-      return res.status(401).json({ message: "No refresh token" });
+      return res.status(401).json({ errors: "No refresh token" });
     }
 
     const hashedToken = hashToken(refreshToken);
@@ -164,10 +164,10 @@ const logout = async (req: Request, res: Response): Promise<Response> => {
 
     res.clearCookie("refreshToken", refreshCookieOptions);
 
-    return res.status(200).json({ message: "User logged out successfully" });
+    return res.status(200).json({});
   } catch (error) {
     console.error("[LOGOUT ERROR]", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ errors: "Internal Server Error" });
   }
 };
 
@@ -180,7 +180,7 @@ const refreshToken = async (req: Request, res: Response): Promise<Response> => {
     const token = req.cookies.refreshToken;
 
     if (!token) {
-      return res.status(401).json({ message: "No refresh token" });
+      return res.status(401).json({ errors: "No refresh token" });
     }
 
     const decoded = jwt.verify(
@@ -196,7 +196,7 @@ const refreshToken = async (req: Request, res: Response): Promise<Response> => {
     });
 
     if (!tokenInDb || tokenInDb.isRevoked || tokenInDb.expiresAt < new Date()) {
-      return res.status(401).json({ message: "Invalid token" });
+      return res.status(401).json({ errors: "Invalid token" });
     }
 
     const { accessToken, refreshToken } = createToken({
@@ -245,7 +245,7 @@ const refreshToken = async (req: Request, res: Response): Promise<Response> => {
 
     return res
       .status(401)
-      .json({ message: "Invalid or expired refresh token" });
+      .json({ errors: "Invalid or expired refresh token" });
   }
 };
 
@@ -264,13 +264,13 @@ const me = async (req: Request, res: Response): Promise<Response<User>> => {
     });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ errors: "User not found" });
     }
 
     return res.status(200).json(user);
   } catch (error) {
     console.error("[ME ERROR]", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ errors: "Internal Server Error" });
   }
 };
 
