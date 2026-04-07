@@ -1,3 +1,18 @@
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  avatarUrl: string | null;
+  bio: string | null;
+  createdAt: Date;
+}
+
+export interface AuthState {
+  user: User | null;
+  accessToken: string | null;
+}
+
+
 export interface Post {
   id: string;
   content: string;

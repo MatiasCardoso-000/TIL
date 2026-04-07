@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { AuthContext, type AuthState, type User } from "./AuthContext";
+import { AuthContext,  } from "./AuthContext";
 import { apiFetch } from "../lib/api";
+import type { AuthState, User } from "../types/types";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [auth, setAuth] = useState<AuthState>({
@@ -40,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
 
         setAuth({ user, accessToken: token.accessToken });
-      } catch (error: any) {
+      } catch (error: any ) {
         if (error.name === "AbortError") return;
       } finally {
         setIsInitializing(false);

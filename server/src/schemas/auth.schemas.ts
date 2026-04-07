@@ -8,9 +8,9 @@ const passwordRegex = /^(?=.*[A-ZÁÉÍÓÚÑ])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]
 
 const passwordSchema = z
   .string()
-  .min(8, "La contraseña debe tener al menos 8 caracteres")
+  .min(8, "La contraseña debe tener al menos 8 caracteres.")
   .regex(passwordRegex, {
-    error: "Debe tener al menos una mayúscula (permite Ñ), un número y un carácter especial",
+    error: "Debe tener al menos una mayúscula (permite Ñ), un número y un carácter especial.",
   })
 
 // ─────────────────────────────────────────
@@ -34,26 +34,26 @@ export const registerSchema = z
   .object({
     username: z
       .string()
-      .min(3, "El usuario debe tener al menos 3 caracteres")
-      .max(20, "El usuario no puede tener más de 20 caracteres")
+      .min(3, "El usuario debe tener al menos 3 caracteres.")
+      .max(20, "El usuario no puede tener más de 20 caracteres.")
       .regex(
         /^[a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ_]+$/,
-        "Solo puede contener letras, números y guión bajo"
+        "Solo puede contener letras, números y guión bajo."
       ),
 
     email: z
-      .string({ error: "El email es requerido" })
-      .min(1, "El email es requerido")
-      .pipe(z.email("El email no es válido")), // ✅ Zod v4
+      .string({ error: "El email es requerido." })
+      .min(1, "El email es requerido.")
+      .pipe(z.email("El email no es válido.")), // ✅ Zod v4
 
     password: passwordSchema,
 
     confirmPassword: z
       .string()
-      .min(1, "Debes confirmar la contraseña"),
+      .min(1, "Debes confirmar la contraseña."),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    error: "Las contraseñas no coinciden",
+    error: "Las contraseñas no coinciden.",
     path: ["confirmPassword"],
   })
 

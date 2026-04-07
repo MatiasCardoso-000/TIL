@@ -1,19 +1,5 @@
 import { createContext } from "react";
-
-export interface User {
-  id: string;
-  username: string;
-  email: string;
-  avatarUrl: true;
-  bio: true;
-  createdAt: true;
-}
-
-export interface AuthState {
-  user: User | null;
-  accessToken: string | null;
-}
-
+import type { AuthState, User } from "../types/types";
 export interface AuthContextType extends AuthState {
   login: (user: User, accessToken: string) => void;
   logout: () => void;

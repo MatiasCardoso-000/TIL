@@ -16,3 +16,185 @@
   }
 }
 
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.til-bg {
+  background-color: #0b0b0f;
+  background-image: radial-gradient(circle at 1px 1px, #16161f 1px, transparent 0);
+  background-size: 28px 28px;
+}
+
+
+.til-label {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #9090a8;
+  margin-bottom: 8px;
+}
+
+.til-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #22222e;
+  border-radius: 0;
+  color: #f0ece4;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  padding: 10px 32px 10px 0;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.til-input::placeholder {
+  color: #32323f;
+}
+
+.til-input:focus {
+  border-bottom-color: #e8c547;
+}
+
+.til-input-bare {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #22222e;
+  border-radius: 0;
+  color: #f0ece4;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  padding: 10px 0;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.til-input-bare::placeholder {
+  color: #32323f;
+}
+
+.til-input-bare:focus {
+  border-bottom-color: #e8c547;
+}
+
+.fade-1 {
+  animation: fadeUp 0.5s ease 0.0s forwards;
+  opacity: 0;
+}
+
+.fade-2 {
+  animation: fadeUp 0.5s ease 0.07s forwards;
+  opacity: 0;
+}
+
+.fade-3 {
+  animation: fadeUp 0.5s ease 0.14s forwards;
+  opacity: 0;
+}
+
+.fade-4 {
+  animation: fadeUp 0.5s ease 0.21s forwards;
+  opacity: 0;
+}
+
+.fade-5 {
+  animation: fadeUp 0.5s ease 0.28s forwards;
+  opacity: 0;
+}
+
+.fade-6 {
+  animation: fadeUp 0.5s ease 0.35s forwards;
+  opacity: 0;
+}
+
+.fade-7 {
+  animation: fadeUp 0.5s ease 0.42s forwards;
+  opacity: 0;
+}
+
+.auth-layout-login .fade-2 {
+  animation-delay: 0.08s;
+}
+
+.auth-layout-login .fade-3 {
+  animation-delay: 0.16s;
+}
+
+.auth-layout-login .fade-4 {
+  animation-delay: 0.24s;
+}
+
+.auth-layout-login .fade-5 {
+  animation-delay: 0.32s;
+}
+
+.til-btn {
+  width: 100%;
+  background: #e8c547;
+  color: #0b0b0f;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 15px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.til-password-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9090a8;
+  padding: 0;
+  line-height: 0;
+}
+
+.til-btn:hover:not(:disabled) {
+  background: #f0d060;
+  transform: translateY(-1px);
+}
+
+.til-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.til-btn:disabled {
+  background: #1e1e2a;
+  color: #3a3a4e;
+  cursor: not-allowed;
+}
+
+.til-error {
+  background: rgba(232, 85, 71, 0.08);
+  border: 1px solid #3a1f1f;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+}
+
+.til-error__text {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: #e85547;
+  margin: 0;
+  line-height: 22px;
+}

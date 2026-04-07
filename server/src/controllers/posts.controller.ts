@@ -26,7 +26,7 @@ const createPost = async (req: Request, res: Response): Promise<Response> => {
   } catch (error) {
     console.error("[POST CREATION ERROR]", error);
     return res.status(500).json({
-      message: "Error interno del servidor",
+      errors: "Error interno del servidor",
     });
   }
 };
@@ -67,7 +67,7 @@ const getPosts = async (req: Request, res: Response): Promise<Response> => {
     });
   } catch (error) {
     console.error("[ERROR GETTING POSTS]", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ errors: "Internal server error" });
   }
 };
 
@@ -94,13 +94,13 @@ const getPostById = async (req: Request, res: Response): Promise<Response> => {
     });
 
     if (!post) {
-      return res.status(404).json({ message: "Post not found" });
+      return res.status(404).json({ errors: "Post not found" });
     }
 
     return res.status(200).json({ post });
   } catch (error) {
     console.error("[ERROR GETTING POST]", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ errors: "Internal server error" });
   }
 };
 
@@ -111,7 +111,7 @@ const updatePost = async (req: Request, res: Response): Promise<Response> => {
     const { content, category } = req.body;
 
     if (!content && !category) {
-      return res.status(400).json({ message: "At least one field required" });
+      return res.status(400).json({ errors: "At least one field required" });
     }
     const updatedPost = await prisma.post
       .update({
@@ -130,12 +130,12 @@ const updatePost = async (req: Request, res: Response): Promise<Response> => {
       });
 
     if (!updatedPost)
-      return res.status(404).json({ message: "Post not found" });
+      return res.status(404).json({ errors: "Post not found" });
 
     return res.status(200).json({ updatedPost });
   } catch (error) {
     console.error("[ERROR UPDATING POST]", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ errors: "Internal server error" });
   }
 };
 
@@ -156,13 +156,13 @@ const deletePost = async (req: Request, res: Response): Promise<Response> => {
       });
 
     if (!deletedPost) {
-      return res.status(404).json({ message: "Post not found" });
+      return res.status(404).json({ errors: "Post not found" });
     }
 
-    return res.status(200).json({ message: "Post deleted" });
+    return res.status(200).json({});
   } catch (error) {
     console.error("[ERROR DELETING POST]", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ errors: "Internal server error" });
   }
 };
 export const PostsController = {
