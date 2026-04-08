@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useApi } from "../lib/useApi";
 import Header from "../components/Header";
 import Form from "../components/Form";
 import type { PostsResponse } from "../types/types";
+
+type ErrorType = Error & {
+  data?: unknown;
+};
 
 function timeAgo(dateStr: string): string {
   const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
@@ -15,8 +19,15 @@ function timeAgo(dateStr: string): string {
 
 function FeedPage() {
   const authFetch = useApi();
-
+  const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
+  const [error, setError] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{
+    content?: string[];
+  }>({});
+  const [editingPostId, setEditingPostId] = useState<number | null>(null);
+  const [editContent, setEditContent] = useState("");
+  const MAX_CHARS = 280;
 
   useEffect(() => {
     const link = document.createElement("link");
@@ -28,6 +39,53 @@ function FeedPage() {
       document.head.removeChild(link);
     };
   }, []);
+
+  const updateMutationPost = useMutation({
+    mutationFn: (postId) =>
+      authFetch(`/posts/${postId}`, {
+        method: "PUT",
+        body: JSON.stringify({ content: editContent }),
+      }),
+    onSuccess: (_: unknown, postId: number) => {
+      queryClient.setQueryData(["posts", page], (old: PostsResponse) => ({
+        ...old,
+        posts: old.posts.map((p) => {
+          return p.id === postId ? { ...p, content: editContent } : p;
+        }),
+      }));
+      setEditingPostId(null);
+      setEditContent("");
+      setFieldErrors({});
+    },
+    onError: (err: ErrorType) =>
+      setFieldErrors(
+        (err.data as { errors?: Record<string, string[]> })?.errors ?? {},
+      ),
+  });
+
+  const deletePostMutation = useMutation({
+    mutationFn: (postId) =>
+      authFetch(`/posts/${postId}`, {
+        method: "DELETE",
+      }),
+    onSuccess: (_: unknown, postId: number) => {
+      queryClient.setQueryData(["posts", page], (old: PostsResponse) => ({
+        ...old,
+        posts: old.posts.filter((post) => post.id !== postId),
+      }));
+    },
+    onError: () => {
+      setError(true);
+      setTimeout(() => {
+        setError(false);
+      }, 4000);
+    },
+  });
+
+  const handleSubmit = async (e: HTMLFormElement) => {
+    e.preventDefault();
+    if (editContent.trim().length < 10) return;
+  };
 
   const { data, isLoading } = useQuery({
     queryKey: ["posts", page],
@@ -48,143 +106,22 @@ function FeedPage() {
 
   return (
     <>
-      <style>{`
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(12px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to   { opacity: 1; }
-        }
-
-        
-
-        .til-bg {
-          background-color: #0b0b0f;
-          background-image: radial-gradient(circle at 1px 1px, #16161f 1px, transparent 0);
-          background-size: 28px 28px;
-        }
-        .til-header {
-          background: rgba(11, 11, 15, 0.92);
-          backdrop-filter: blur(12px);
-          border-bottom: 1px solid #16161f;
-          position: sticky;
-          top: 0;
-          z-index: 10;
-        }
-        .til-textarea {
-          background: transparent;
-          border: none;
-          color: #f0ece4;
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 13px;
-          line-height: 1.7;
-          resize: none;
-          width: 100%;
-          outline: none;
-        }
-        .til-textarea::placeholder { color: #9090a8; }
-        .til-select {
-          background: transparent;
-          border: 1px solid #22222e;
-          color: #9090a8;
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 10px;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          padding: 5px 10px;
-          outline: none;
-          cursor: pointer;
-          transition: border-color 0.2s, color 0.2s;
-        }
-        .til-select:focus { border-color: #e8c547; color: #f0ece4; }
-        .til-select option { background: #0f0f17; color: #f0ece4; }
-        .til-btn-publish {
-          background: #e8c547;
-          color: #0b0b0f;
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 10px;
-          font-weight: 500;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          padding: 8px 18px;
-          border: none;
-          cursor: pointer;
-          transition: background 0.15s, transform 0.1s;
-          white-space: nowrap;
-        }
-        .til-btn-publish:hover:not(:disabled) { background: #f0d060; transform: translateY(-1px); }
-        .til-btn-publish:active:not(:disabled) { transform: translateY(0); }
-        .til-btn-publish:disabled { background: #2a2a3a; color: #5a5a6e; cursor: not-allowed; }
-        .til-post {
-          border-top: 1px solid #16161f;
-          padding: 20px 0;
-          animation: fadeIn 0.3s ease forwards;
-        }
-        .til-post:last-child { border-bottom: 1px solid #16161f; }
-        .til-category {
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 9px;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          color: #e8c547;
-          border: 1px solid #2e2818;
-          padding: 2px 8px;
-          background: rgba(232, 197, 71, 0.06);
-        }
-        .til-logout {
-          background: none;
-          border: none;
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 10px;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          color: #9090a8;
-          cursor: pointer;
-          padding: 0;
-          transition: color 0.15s;
-        }
-        .til-logout:hover { color: #e85547; }
-        .til-page-btn {
-          background: none;
-          border: none;
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 10px;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          color: #9090a8;
-          cursor: pointer;
-          padding: 6px 0;
-          transition: color 0.15s;
-        }
-        .til-page-btn:hover:not(:disabled) { color: #e8c547; }
-        .til-page-btn:disabled { color: #22222e; cursor: not-allowed; }
-        .fade-1 { animation: fadeUp 0.4s ease 0.0s forwards; opacity: 0; }
-        .fade-2 { animation: fadeUp 0.4s ease 0.08s forwards; opacity: 0; }
-        .fade-3 { animation: fadeUp 0.4s ease 0.16s forwards; opacity: 0; }
-      `}</style>
-
       <div className="til-bg" style={{ minHeight: "100vh" }}>
         <Header />
 
         <main
           style={{ maxWidth: "600px", margin: "0 auto", padding: "32px 24px" }}
         >
+          {error && (
+            <div className="til-error">
+              <p className="til-error__text ">
+                Hubo un error. Por favor intenta de nuevo.
+              </p>
+            </div>
+          )}
           {/* Composer */}
           <div className="fade-1" style={{ marginBottom: "40px" }}>
-            <div
-              style={{
-                fontFamily: "'IBM Plex Mono', monospace",
-                fontSize: "9px",
-                color: "#9090a8",
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                marginBottom: "14px",
-              }}
-            >
-              Nueva entrada
-            </div>
+            <div className="til-label">Nueva entrada</div>
             <Form />
             <div
               style={{
@@ -235,27 +172,70 @@ function FeedPage() {
                         marginBottom: "12px",
                       }}
                     >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "10px",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontFamily: "'IBM Plex Mono', monospace",
-                            fontSize: "12px",
-                            color: "#f0ece4",
-                            fontWeight: 500,
-                          }}
-                        >
-                          @{post.user.username}
-                        </span>
-                        <span className="til-category">
-                          {CATEGORIES.find((c) => c.value === post.category)
-                            ?.label ?? post.category}
-                        </span>
+                      <div className="flex justify-between w-full pr-6">
+                        <div className="flex gap-4">
+                          <span
+                            style={{
+                              fontFamily: "'IBM Plex Mono', monospace",
+                              fontSize: "12px",
+                              color: "#f0ece4",
+                              fontWeight: 500,
+                            }}
+                          >
+                            @{post.user.username}
+                          </span>
+                          <span className="til-category">
+                            {CATEGORIES.find((c) => c.value === post.category)
+                              ?.label ?? post.category}
+                          </span>
+                        </div>
+                        <div className="flex gap-4">
+                          <span>
+                            <button
+                              className="text-white"
+                              onClick={() => deletePostMutation.mutate(post.id)}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                              </svg>
+                            </button>
+                          </span>
+                          <span>
+                            <button
+                              className="text-white"
+                              onClick={() => {
+                                setEditingPostId(post.id);
+                                setEditContent(post.content);
+                              }}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                              </svg>
+                            </button>
+                          </span>
+                        </div>
                       </div>
                       <span
                         style={{
@@ -267,17 +247,52 @@ function FeedPage() {
                         {timeAgo(post.createdAt)}
                       </span>
                     </div>
-                    <p
-                      style={{
-                        fontFamily: "'IBM Plex Mono', monospace",
-                        fontSize: "13px",
-                        color: "#c8c4bc",
-                        lineHeight: 1.75,
-                        margin: 0,
-                      }}
-                    >
-                      {post.content}
-                    </p>
+                    {post.id === editingPostId ? (
+                      <form onSubmit={handleSubmit}>
+                        <textarea
+                          className="til-textarea"
+                          onChange={(e) =>
+                            setEditContent(e.target.value.slice(0, MAX_CHARS))
+                          }
+                          value={editContent}
+                          rows={3}
+                        ></textarea>
+                        <div className="flex gap-2">
+                          <button
+                            className="text-white"
+                            onClick={() => updateMutationPost.mutate(post.id)}
+                          >
+                            save
+                          </button>
+                          <button
+                            className="text-white"
+                            onClick={() => {
+                              setEditingPostId(null);
+                              setEditContent("");
+                            }}
+                          >
+                            cancel
+                          </button>
+                        </div>
+                        {fieldErrors.content?.map((e) => (
+                          <div className="til-error mt-4" key={post.id}>
+                            <p className="til-error__text">{e}</p>
+                          </div>
+                        ))}
+                      </form>
+                    ) : (
+                      <p
+                        style={{
+                          fontFamily: "'IBM Plex Mono', monospace",
+                          fontSize: "13px",
+                          color: "#c8c4bc",
+                          lineHeight: 1.75,
+                          margin: 0,
+                        }}
+                      >
+                        {post.content}
+                      </p>
+                    )}
                   </article>
                 ))}
               </div>
@@ -303,7 +318,19 @@ function FeedPage() {
                 onClick={() => setPage((p) => p - 1)}
                 disabled={page === 1}
               >
-                ← Anterior
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
               </button>
               <span
                 style={{
@@ -320,7 +347,19 @@ function FeedPage() {
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!data.pagination.hasNext}
               >
-                Siguiente →
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
               </button>
             </div>
           )}

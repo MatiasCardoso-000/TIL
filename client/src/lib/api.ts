@@ -2,7 +2,7 @@ export const BASE_URL = "/api";
 
 type ErrorType = Error & {
   data?: unknown;
-}
+};
 
 export async function apiFetch<T>(
   path: string,
@@ -18,11 +18,11 @@ export async function apiFetch<T>(
   });
 
   const body = await res.json().catch(() => ({}));
-  
+ 
+
   if (!res.ok) {
     const error: ErrorType = new Error(body.errors ?? "Request failed");
-    console.log(body);
-    
+
     error.data = body;
     throw error;
   }

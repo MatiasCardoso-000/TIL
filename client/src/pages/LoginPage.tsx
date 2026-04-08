@@ -1,16 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-
 import { apiFetch } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import AuthLayout, { EyeIcon } from "../components/AuthLayout";
 import type { User } from "../types/types";
-import Form from "../components/Form";
 import ErrorMessage from "../components/ErrorMessage";
 
 interface LoginResponse {
-  user: User
+  user: User;
   accessToken: string;
 }
 
@@ -47,13 +45,9 @@ function LoginPage() {
       footerLinkText="Registrate"
       footerLinkTo="/register"
     >
-      <Form handleSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <div className="fade-3" style={{ marginBottom: "24px" }}>
-          <label
-           className="til-label"
-          >
-            Email
-          </label>
+          <label className="til-label">Email</label>
           <input
             className="til-input"
             type="email"
@@ -65,11 +59,7 @@ function LoginPage() {
         </div>
 
         <div className="fade-4" style={{ marginBottom: "32px" }}>
-          <label
-className="til-label"
-          >
-            Contraseña
-          </label>
+          <label className="til-label">Contraseña</label>
           <div style={{ position: "relative" }}>
             <input
               className="til-input"
@@ -79,28 +69,32 @@ className="til-label"
               required
               placeholder="••••••••"
             />
-             <button
-               type="button"
-               onClick={() => setShowPassword((v) => !v)}
-               className="til-password-btn"
-               aria-label={
-                 showPassword ? "Ocultar contraseña" : "Ver contraseña"
-               }
-             >
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className="til-password-btn"
+              aria-label={
+                showPassword ? "Ocultar contraseña" : "Ver contraseña"
+              }
+            >
               <EyeIcon open={showPassword} />
             </button>
           </div>
         </div>
 
         {mutation.isError && (
-         <ErrorMessage message={mutation.error.message} variant="login"/>
+          <ErrorMessage message={mutation.error.message} variant="login" />
         )}
         <div className="fade-5">
-          <button type="submit" disabled={mutation.isPending} className="til-btn">
+          <button
+            type="submit"
+            disabled={mutation.isPending}
+            className="til-btn"
+          >
             {mutation.isPending ? "Iniciando sesión..." : "Iniciar sesión →"}
           </button>
         </div>
-      </Form>
+      </form>
     </AuthLayout>
   );
 }

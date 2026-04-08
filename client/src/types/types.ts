@@ -1,5 +1,5 @@
 export interface User {
-  id: string;
+  id: number;
   username: string;
   email: string;
   avatarUrl: string | null;
@@ -14,7 +14,7 @@ export interface AuthState {
 
 
 export interface Post {
-  id: string;
+  id: number;
   content: string;
   category: string;
   createdAt: string;

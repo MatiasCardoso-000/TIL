@@ -23,7 +23,7 @@ router.post(
 
 router.get("/", authenticate, PostsController.getPosts);
 router.get("/:id", authenticate, PostsController.getPostById);
-router.patch(
+router.put(
   "/:id",
   authenticate,
   validateSchema(updatePostSchema),
