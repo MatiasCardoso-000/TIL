@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { useTheme } from "../context/ThemeProvider";
 
 interface AuthLayoutProps {
   title: string;
@@ -68,10 +69,12 @@ function AuthLayout({
   footerLinkTo,
   variant = "register",
 }: AuthLayoutProps) {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <>
       <div
-        className={`til-bg auth-layout-${variant}`}
+        className={`auth-bg auth-layout-${variant}`}
         style={{
           minHeight: "100vh",
           display: "flex",
@@ -80,76 +83,67 @@ function AuthLayout({
           padding: "24px",
         }}
       >
+        {/* Theme toggle button */}
+        <button
+          className="auth-theme-btn"
+          onClick={toggleTheme}
+          aria-label={`Cambiar a modo ${theme === "dark" ? "claro" : "oscuro"}`}
+          title={`Modo ${theme === "dark" ? "claro" : "oscuro"}`}
+        >
+          {theme === "dark" ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          )}
+        </button>
+
         <div style={{ width: "100%", maxWidth: "340px" }}>
           <div className="fade-1" style={{ marginBottom: "36px" }}>
-            <div
-              style={{
-                fontFamily: "'IBM Plex Mono', monospace",
-                fontSize: "10px",
-                color: "#9090a8",
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                marginBottom: "10px",
-              }}
-            >
-              vol. i — {new Date().getFullYear()}
-            </div>
-            <h1
-              style={{
-                fontFamily: "'Instrument Serif', serif",
-                fontSize: "52px",
-                color: "#f0ece4",
-                lineHeight: 1,
-                margin: 0,
-              }}
-            >
-              TIL
-            </h1>
-            <p
-              style={{
-                fontFamily: "'IBM Plex Mono', monospace",
-                fontSize: "10px",
-                color: "#9090a8",
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                marginTop: "6px",
-              }}
-            >
-              {title}
-            </p>
+            <div className="auth-volume">vol. i — {new Date().getFullYear()}</div>
+            <h1 className="auth-title">TIL</h1>
+            <p className="auth-subtitle">{title}</p>
           </div>
 
-          <div
-            className="fade-2"
-            style={{
-              height: "1px",
-              background: "linear-gradient(to right, #e8c547 0%, #2a2a3a 60%)",
-              marginBottom: "32px",
-            }}
-          />
+          <div className="auth-divider" />
 
           {children}
 
-          <div
-            style={{
-              height: "1px",
-              background: "#16161f",
-              margin: "28px 0 20px",
-            }}
-          />
-          <p
-            style={{
-              fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: "11px",
-              color: "#9090a8",
-              textAlign: "center",
-            }}
-          >
+          <div className="auth-footer-divider" />
+          <p className="auth-footer">
             {footerText}{" "}
-            <Link
-              to={footerLinkTo}
-              style={{ color: "#e8c547", textDecoration: "none" }}
-            >
+            <Link to={footerLinkTo} className="auth-link">
               {footerLinkText}
             </Link>
           </p>

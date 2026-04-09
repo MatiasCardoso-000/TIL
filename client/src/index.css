@@ -1,174 +1,406 @@
 @import "tailwindcss";
 
+/* ============================================
+   TIL - Theme System
+   Light & Dark modes with CSS variables
+   ============================================ */
+
+/* ============================================
+   Dark Theme (default)
+   ============================================ */
+
+:root,
+[data-theme="dark"] {
+  /* Core palette */
+  --bg-base: #121218;
+  --bg-surface: #1a1a22;
+  --bg-elevated: #222230;
+  
+  /* Text - contraste WCAG AA mínimo 4.5:1 */
+  --text-primary: #f5f5f7;
+  --text-secondary: #b8b8c8;
+  --text-tertiary: #888898;
+  
+  /* Accent - coral */
+  --accent: #e07050;
+  --accent-hover: #c85a3a;
+  --accent-muted: rgba(224, 112, 80, 0.15);
+  
+  /* Borders */
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.2);
+  
+  /* Feedback */
+  --error: #e85547;
+  --error-bg: rgba(232, 85, 71, 0.15);
+  --success: #4ade80;
+  
+  /* Header */
+  --header-bg: rgba(18, 18, 24, 0.95);
+  --header-border: rgba(255, 255, 255, 0.08);
+  
+  /* Feed */
+  --feed-dot: #2a2a35;
+  --post-border: rgba(255, 255, 255, 0.08);
+}
+
+/* ============================================
+   Light Theme
+   ============================================ */
+
+[data-theme="light"] {
+  /* Core palette - clean whites */
+  --bg-base: #fafafa;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f5f5f7;
+  
+  /* Text - contraste WCAG AA mínimo 4.5:1 */
+  --text-primary: #1a1a1f;
+  --text-secondary: #4a4a58;
+  --text-tertiary: #6a6a7a;
+  
+  /* Accent - coral */
+  --accent: #d65a3a;
+  --accent-hover: #c04828;
+  --accent-muted: rgba(214, 90, 58, 0.1);
+  
+  /* Borders */
+  --border: rgba(0, 0, 0, 0.1);
+  --border-strong: rgba(0, 0, 0, 0.15);
+  
+  /* Feedback */
+  --error: #dc3545;
+  --error-bg: rgba(220, 53, 69, 0.1);
+  --success: #22c55e;
+  
+  /* Header */
+  --header-bg: rgba(255, 255, 255, 0.95);
+  --header-border: rgba(0, 0, 0, 0.06);
+  
+  /* Feed */
+  --feed-dot: #e5e5ea;
+  --post-border: rgba(0, 0, 0, 0.06);
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ============================================
+   Spinner
+   ============================================ */
 
 .til-spinner {
   width: 12px;
   height: 12px;
-  border: 2px solid rgba(255, 255, 255, 0.35);
-  border-top-color: #fff;
+  border: 2px solid var(--border);
+  border-top-color: var(--text-primary);
   border-radius: 999px;
   animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
+/* ============================================
+   Animations
+   ============================================ */
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
-
-
 
 @keyframes fadeUp {
   from {
     opacity: 0;
     transform: translateY(14px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.til-bg {
-  background-color: #0b0b0f;
-  background-image: radial-gradient(circle at 1px 1px, #16161f 1px, transparent 0);
-  background-size: 28px 28px;
+.fade-1 { animation: fadeUp 0.5s ease 0.0s forwards; opacity: 0; }
+.fade-2 { animation: fadeUp 0.5s ease 0.07s forwards; opacity: 0; }
+.fade-3 { animation: fadeUp 0.5s ease 0.14s forwards; opacity: 0; }
+.fade-4 { animation: fadeUp 0.5s ease 0.21s forwards; opacity: 0; }
+.fade-5 { animation: fadeUp 0.5s ease 0.28s forwards; opacity: 0; }
+.fade-6 { animation: fadeUp 0.5s ease 0.35s forwards; opacity: 0; }
+.fade-7 { animation: fadeUp 0.5s ease 0.42s forwards; opacity: 0; }
+
+/* ============================================
+   Header
+   ============================================ */
+
+.til-header {
+  background: var(--header-bg);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--header-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
 
-
-.til-label {
-  display: block;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #9090a8;
-  margin-bottom: 8px;
+.header-logo {
+  font-family: 'Instrument Serif', serif;
+  font-size: 24px;
+  color: var(--text-primary);
+  line-height: 1;
+  transition: color 0.3s ease;
 }
 
-.til-input {
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid #22222e;
-  border-radius: 0;
-  color: #f0ece4;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  padding: 10px 32px 10px 0;
-  width: 100%;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.til-input::placeholder {
-  color: #32323f;
-}
-
-.til-input:focus {
-  border-bottom-color: #e8c547;
-}
-
-.til-input-bare {
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid #22222e;
-  border-radius: 0;
-  color: #f0ece4;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  padding: 10px 0;
-  width: 100%;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.til-input-bare::placeholder {
-  color: #32323f;
-}
-
-.til-input-bare:focus {
-  border-bottom-color: #e8c547;
-}
-
-.fade-1 {
-  animation: fadeUp 0.5s ease 0.0s forwards;
-  opacity: 0;
-}
-
-.fade-2 {
-  animation: fadeUp 0.5s ease 0.07s forwards;
-  opacity: 0;
-}
-
-.fade-3 {
-  animation: fadeUp 0.5s ease 0.14s forwards;
-  opacity: 0;
-}
-
-.fade-4 {
-  animation: fadeUp 0.5s ease 0.21s forwards;
-  opacity: 0;
-}
-
-.fade-5 {
-  animation: fadeUp 0.5s ease 0.28s forwards;
-  opacity: 0;
-}
-
-.fade-6 {
-  animation: fadeUp 0.5s ease 0.35s forwards;
-  opacity: 0;
-}
-
-.fade-7 {
-  animation: fadeUp 0.5s ease 0.42s forwards;
-  opacity: 0;
-}
-
-.auth-layout-login .fade-2 {
-  animation-delay: 0.08s;
-}
-
-.auth-layout-login .fade-3 {
-  animation-delay: 0.16s;
-}
-
-.auth-layout-login .fade-4 {
-  animation-delay: 0.24s;
-}
-
-.auth-layout-login .fade-5 {
-  animation-delay: 0.32s;
-}
-
-.til-btn {
-  width: 100%;
-  background: #e8c547;
-  color: #0b0b0f;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  font-weight: 500;
+.header-subtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  color: var(--text-tertiary);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  padding: 15px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
+  transition: color 0.3s ease;
 }
 
-.til-password-btn {
+.header-username {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+.header-theme-btn {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.header-theme-btn:hover {
+  background: var(--accent-muted);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: scale(1.05);
+}
+
+.header-theme-btn:active {
+  transform: scale(0.95);
+}
+
+.header-theme-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.til-logout {
+  background: none;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.til-logout:hover {
+  color: var(--error);
+  background: var(--error-bg);
+}
+
+/* ============================================
+   Post Action Icons
+   ============================================ */
+
+.post-action-btn {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color 0.15s ease-out, background 0.15s ease-out, opacity 0.15s ease-out;
+  opacity: 0.6;
+}
+
+.post-action-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-elevated);
+  opacity: 1;
+}
+
+.post-action-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   Auth Layout
+   ============================================ */
+
+.auth-bg {
+  background-color: var(--bg-base);
+  background-image: radial-gradient(circle at 1px 1px, var(--feed-dot) 1px, transparent 0);
+  background-size: 28px 28px;
+  transition: background-color 0.3s ease;
+}
+
+.auth-theme-btn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+  z-index: 100;
+}
+
+.auth-theme-btn:hover {
+  background: var(--accent-muted);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: scale(1.05);
+}
+
+.auth-theme-btn:active {
+  transform: scale(0.95);
+}
+
+.auth-theme-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.auth-volume {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  transition: color 0.3s ease;
+}
+
+.auth-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 52px;
+  color: var(--text-primary);
+  line-height: 1;
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.auth-subtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  color: var(--text-secondary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 8px;
+  transition: color 0.3s ease;
+}
+
+.auth-divider {
+  height: 1px;
+  background: linear-gradient(to right, var(--accent) 0%, var(--border) 60%);
+  margin-bottom: 32px;
+  transition: background 0.3s ease;
+}
+
+.auth-footer-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 28px 0 20px;
+  transition: background 0.3s ease;
+}
+
+.auth-footer {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+  transition: color 0.3s ease;
+}
+
+.auth-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.auth-link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+/* ============================================
+   Auth Pages
+   ============================================ */
+
+.auth-label {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  transition: color 0.3s ease;
+}
+
+.auth-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--border);
+  border-radius: 0;
+  color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  padding: 10px 0;
+  outline: none;
+  transition: border-color 0.2s ease-out, color 0.3s ease;
+}
+
+.auth-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.auth-input:focus {
+  border-bottom-color: var(--accent);
+}
+
+.auth-input--password {
+  padding-right: 40px;
+}
+
+.auth-password-btn {
   position: absolute;
   right: 0;
   top: 50%;
@@ -176,13 +408,167 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #9090a8;
+  color: var(--text-secondary);
   padding: 0;
   line-height: 0;
+  transition: color 0.15s ease-out;
+}
+
+.auth-password-btn:hover {
+  color: var(--text-secondary);
+}
+
+.auth-hint {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: 6px;
+  transition: color 0.3s ease;
+}
+
+.auth-btn {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease-out, transform 0.1s ease-out;
+}
+
+.auth-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.auth-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.auth-btn:disabled {
+  background: var(--border);
+  color: var(--text-tertiary);
+  cursor: not-allowed;
+}
+
+.auth-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   Feed Page
+   ============================================ */
+
+.til-bg {
+  background-color: var(--bg-base);
+  background-image: radial-gradient(circle at 1px 1px, var(--feed-dot) 1px, transparent 0);
+  background-size: 28px 28px;
+  transition: background-color 0.3s ease;
+}
+
+.til-label {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  transition: color 0.3s ease;
+}
+
+.til-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  padding: 10px 32px 10px 0;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s ease-out, color 0.3s ease;
+}
+
+.til-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.til-input:focus {
+  border-bottom-color: var(--accent);
+}
+
+.til-textarea {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.7;
+  resize: none;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s ease-out, color 0.3s ease;
+}
+
+.til-textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.til-textarea:focus {
+  border-bottom-color: var(--accent);
+}
+
+.til-select {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease-out, color 0.2s ease-out, background 0.3s ease;
+  border-radius: 6px;
+}
+
+.til-select:focus {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.til-select option {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+.til-btn {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease-out, transform 0.1s ease-out;
 }
 
 .til-btn:hover:not(:disabled) {
-  background: #f0d060;
+  background: var(--accent-hover);
   transform: translateY(-1px);
 }
 
@@ -191,93 +577,28 @@
 }
 
 .til-btn:disabled {
-  background: #1e1e2a;
-  color: #3a3a4e;
+  background: var(--border);
+  color: var(--text-tertiary);
   cursor: not-allowed;
 }
 
-.til-error {
-  background: rgba(232, 85, 71, 0.08);
-  border: 1px solid #3a1f1f;
-  padding: 10px 12px;
-  margin-bottom: 16px;
-}
-
-.til-error__text {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: #e85547;
-  margin: 0;
-  line-height: 22px;
-}
-
-/* FeedPage styles */
-.til-header {
-  background: rgba(11, 11, 15, 0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid #16161f;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.til-textarea {
-  background: transparent;
-  border: none;
-  color: #f0ece4;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  line-height: 1.7;
-  resize: none;
-  width: 100%;
-  outline: none;
-}
-
-.til-textarea::placeholder {
-  color: #9090a8;
-}
-
-.til-select {
-  background: transparent;
-  border: 1px solid #22222e;
-  color: #9090a8;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 5px 10px;
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
-}
-
-.til-select:focus {
-  border-color: #e8c547;
-  color: #f0ece4;
-}
-
-.til-select option {
-  background: #0f0f17;
-  color: #f0ece4;
-}
-
 .til-btn-publish {
-  background: #e8c547;
-  color: #0b0b0f;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 8px 18px;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 8px 16px;
   border: none;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
+  transition: background 0.2s ease-out, transform 0.1s ease-out;
   white-space: nowrap;
 }
 
 .til-btn-publish:hover:not(:disabled) {
-  background: #f0d060;
+  background: var(--accent-hover);
   transform: translateY(-1px);
 }
 
@@ -286,58 +607,129 @@
 }
 
 .til-btn-publish:disabled {
-  background: #2a2a3a;
-  color: #5a5a6e;
+  background: var(--border);
+  color: var(--text-tertiary);
   cursor: not-allowed;
 }
 
 .til-post {
-  border-top: 1px solid #16161f;
+  border-top: 1px solid var(--post-border);
   padding: 20px 0;
   animation: fadeIn 0.3s ease forwards;
+  transition: border-color 0.3s ease;
 }
 
 .til-post:last-child {
-  border-bottom: 1px solid #16161f;
+  border-bottom: 1px solid var(--post-border);
 }
 
 .til-category {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #e8c547;
-  border: 1px solid #2e2818;
-  padding: 2px 8px;
-  background: rgba(232, 197, 71, 0.06);
-}
-
-.til-logout {
-  background: none;
-  border: none;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'DM Sans', sans-serif;
   font-size: 10px;
-  letter-spacing: 0.1em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #9090a8;
-  cursor: pointer;
-  padding: 0;
-  transition: color 0.15s;
+  color: var(--accent);
+  border: 1px solid var(--accent-muted);
+  padding: 3px 10px;
+  background: var(--accent-muted);
+  border-radius: 4px;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-.til-logout:hover {
-  color: #e85547;
+.til-error {
+  background: var(--error-bg);
+  border: 1px solid oklch(from var(--error) l c h / 0.3);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  transition: background 0.3s ease;
+}
+
+.til-error__text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--error);
+  margin: 0;
+  line-height: 1.5;
+  transition: color 0.3s ease;
 }
 
 .til-page-btn {
   background: none;
   border: none;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.1em;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #9090a8;
+  color: var(--text-secondary);
   cursor: pointer;
-  padding: 6px 0;
-  transition: color 0.15s;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: color 0.15s ease-out, background 0.15s ease-out;
+}
+
+.til-page-btn:hover:not(:disabled) {
+  color: var(--accent);
+  background: var(--accent-muted);
+}
+
+.til-page-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.til-page-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   Edit Post Action Buttons
+   ============================================ */
+
+.edit-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease-out, transform 0.1s ease-out;
+}
+
+.edit-action-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.edit-action-btn--save {
+  background: oklch(70% 0.18 145 / 0.2);
+  color: var(--success);
+}
+
+.edit-action-btn--save:hover {
+  background: oklch(70% 0.18 145 / 0.35);
+}
+
+.edit-action-btn--save:active {
+  transform: scale(0.97);
+}
+
+.edit-action-btn--cancel {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.edit-action-btn--cancel:hover {
+  background: oklch(from var(--error) l c h / 0.25);
+}
+
+.edit-action-btn--cancel:active {
+  transform: scale(0.97);
 }

@@ -47,9 +47,9 @@ function LoginPage() {
     >
       <form onSubmit={handleSubmit}>
         <div className="fade-3" style={{ marginBottom: "24px" }}>
-          <label className="til-label">Email</label>
+          <label className="auth-label">Email</label>
           <input
-            className="til-input"
+            className="auth-input"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -59,10 +59,10 @@ function LoginPage() {
         </div>
 
         <div className="fade-4" style={{ marginBottom: "32px" }}>
-          <label className="til-label">Contraseña</label>
+          <label className="auth-label">Contraseña</label>
           <div style={{ position: "relative" }}>
             <input
-              className="til-input"
+              className="auth-input auth-input--password"
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -72,7 +72,7 @@ function LoginPage() {
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="til-password-btn"
+              className="auth-password-btn"
               aria-label={
                 showPassword ? "Ocultar contraseña" : "Ver contraseña"
               }
@@ -89,7 +89,7 @@ function LoginPage() {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="til-btn"
+            className="auth-btn"
           >
             {mutation.isPending ? "Iniciando sesión..." : "Iniciar sesión →"}
           </button>

@@ -5,7 +5,6 @@ import { apiFetch } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import AuthLayout, { EyeIcon } from "../components/AuthLayout";
 import type { User } from "../types/types";
-import Form from "../components/Form";
 import ErrorMessage from "../components/ErrorMessage";
 
 interface RegisterResponse {
@@ -51,7 +50,7 @@ function RegisterPage() {
     },
   });
 
-  const handleSubmit = (e: React.SubmitEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     mutation.mutate();
   };
@@ -64,11 +63,15 @@ function RegisterPage() {
       footerLinkText="Iniciá sesión"
       footerLinkTo="/login"
     >
-      <Form handleSubmit={handleSubmit}>
-        <div className="fade-3" style={{ marginBottom: "24px" }}>
-          <label className="til-label">Usuario</label>
+      <form onSubmit={handleSubmit}>
+        <div className="fade-3" style={{ marginBottom: "20px" }}>
+          <label
+            className="auth-label"
+          >
+            Usuario
+          </label>
           <input
-            className="til-input-bare"
+            className="auth-input"
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -77,10 +80,10 @@ function RegisterPage() {
           />
         </div>
 
-        <div className="fade-4" style={{ marginBottom: "24px" }}>
-          <label className="til-label">Email</label>
+        <div className="fade-4" style={{ marginBottom: "20px" }}>
+          <label className="auth-label">Email</label>
           <input
-            className="til-input-bare"
+            className="auth-input"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -89,11 +92,11 @@ function RegisterPage() {
           />
         </div>
 
-        <div className="fade-5" style={{ marginBottom: "24px" }}>
-          <label className="til-label">Contraseña</label>
+        <div className="fade-5" style={{ marginBottom: "20px" }}>
+          <label className="auth-label">Contraseña</label>
           <div style={{ position: "relative" }}>
             <input
-              className="til-input"
+              className="auth-input auth-input--password"
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -103,31 +106,22 @@ function RegisterPage() {
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="til-password-btn"
-              aria-label={
-                showPassword ? "Ocultar contraseña" : "Ver contraseña"
-              }
+              className="auth-password-btn"
+              aria-label={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
             >
               <EyeIcon open={showPassword} />
             </button>
           </div>
-          <p
-            style={{
-              fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: "10px",
-              color: "#9090a8",
-              marginTop: "6px",
-            }}
-          >
+          <p className="auth-hint">
             Mín. 8 chars, mayúscula, número y símbolo.
           </p>
         </div>
 
-        <div className="fade-6" style={{ marginBottom: "32px" }}>
-          <label className="til-label">Confirmar contraseña</label>
+        <div className="fade-6" style={{ marginBottom: "24px" }}>
+          <label className="auth-label">Confirmar contraseña</label>
           <div style={{ position: "relative" }}>
             <input
-              className="til-input"
+              className="auth-input auth-input--password"
               type={showConfirm ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -137,7 +131,7 @@ function RegisterPage() {
             <button
               type="button"
               onClick={() => setShowConfirm((v) => !v)}
-              className="til-password-btn"
+              className="auth-password-btn"
               aria-label={showConfirm ? "Ocultar contraseña" : "Ver contraseña"}
             >
               <EyeIcon open={showConfirm} />
@@ -153,12 +147,12 @@ function RegisterPage() {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="til-btn"
+            className="auth-btn"
           >
             {mutation.isPending ? "Creando cuenta..." : "Crear cuenta →"}
           </button>
         </div>
-      </Form>
+      </form>
     </AuthLayout>
   );
 }

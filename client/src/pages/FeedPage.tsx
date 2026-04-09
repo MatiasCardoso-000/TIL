@@ -29,10 +29,11 @@ function FeedPage() {
   const [editContent, setEditContent] = useState("");
   const MAX_CHARS = 280;
 
+  // Load distinctive fonts — avoid reflex fonts (IBM Plex Mono, Space Grotesk, etc.)
   useEffect(() => {
     const link = document.createElement("link");
     link.href =
-      "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap";
+      "https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap";
     link.rel = "stylesheet";
     document.head.appendChild(link);
     return () => {
@@ -82,7 +83,7 @@ function FeedPage() {
     },
   });
 
-  const handleSubmit = async (e: HTMLFormElement) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (editContent.trim().length < 10) return;
   };
@@ -124,9 +125,10 @@ function FeedPage() {
             <div className="til-label">Nueva entrada</div>
             <Form />
             <div
+              aria-hidden="true"
               style={{
                 height: "1px",
-                background: "linear-gradient(to right, #e8c547, #22222e)",
+                background: "var(--border)",
                 marginBottom: "16px",
               }}
             />
@@ -137,12 +139,13 @@ function FeedPage() {
             {isLoading ? (
               <div
                 style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontSize: "11px",
-                  color: "#9090a8",
+                  color: "var(--text-secondary)",
                   textAlign: "center",
                   padding: "48px 0",
-                  letterSpacing: "0.1em",
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
                 }}
               >
                 Cargando...
@@ -150,12 +153,13 @@ function FeedPage() {
             ) : data?.posts.length === 0 ? (
               <div
                 style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontSize: "11px",
-                  color: "#9090a8",
+                  color: "var(--text-secondary)",
                   textAlign: "center",
                   padding: "48px 0",
-                  letterSpacing: "0.1em",
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
                 }}
               >
                 No hay posts todavía.
@@ -176,9 +180,9 @@ function FeedPage() {
                         <div className="flex gap-4">
                           <span
                             style={{
-                              fontFamily: "'IBM Plex Mono', monospace",
+                              fontFamily: "'DM Sans', sans-serif",
                               fontSize: "12px",
-                              color: "#f0ece4",
+                              color: "var(--text-primary)",
                               fontWeight: 500,
                             }}
                           >
@@ -192,7 +196,8 @@ function FeedPage() {
                         <div className="flex gap-4">
                           <span>
                             <button
-                              className="text-white"
+                              aria-label="Eliminar post"
+                              className="post-action-btn"
                               onClick={() => deletePostMutation.mutate(post.id)}
                             >
                               <svg
@@ -213,7 +218,8 @@ function FeedPage() {
                           </span>
                           <span>
                             <button
-                              className="text-white"
+                              aria-label="Editar post"
+                              className="post-action-btn"
                               onClick={() => {
                                 setEditingPostId(post.id);
                                 setEditContent(post.content);
@@ -239,9 +245,10 @@ function FeedPage() {
                       </div>
                       <span
                         style={{
-                          fontFamily: "'IBM Plex Mono', monospace",
+                          fontFamily: "'DM Sans', sans-serif",
                           fontSize: "10px",
-                          color: "#9090a8",
+                          color: "var(--text-tertiary)",
+                          letterSpacing: "0.05em",
                         }}
                       >
                         {timeAgo(post.createdAt)}
@@ -257,21 +264,50 @@ function FeedPage() {
                           value={editContent}
                           rows={3}
                         ></textarea>
-                        <div className="flex gap-2">
+                        <div className="flex gap-3" style={{ marginTop: "12px" }}>
                           <button
-                            className="text-white"
+                            aria-label="Guardar cambios"
+                            className="edit-action-btn edit-action-btn--save"
                             onClick={() => updateMutationPost.mutate(post.id)}
                           >
-                            save
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>Guardar</span>
                           </button>
                           <button
-                            className="text-white"
+                            aria-label="Cancelar edición"
+                            className="edit-action-btn edit-action-btn--cancel"
                             onClick={() => {
                               setEditingPostId(null);
                               setEditContent("");
                             }}
                           >
-                            cancel
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <line x1="18" y1="6" x2="6" y2="18"></line>
+                              <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                            <span>Cancelar</span>
                           </button>
                         </div>
                         {fieldErrors.content?.map((e) => (
@@ -283,10 +319,10 @@ function FeedPage() {
                     ) : (
                       <p
                         style={{
-                          fontFamily: "'IBM Plex Mono', monospace",
-                          fontSize: "13px",
-                          color: "#c8c4bc",
-                          lineHeight: 1.75,
+                          fontFamily: "'DM Sans', sans-serif",
+                          fontSize: "14px",
+                          color: "var(--text-primary)",
+                          lineHeight: 1.7,
                           margin: 0,
                         }}
                       >
@@ -309,7 +345,7 @@ function FeedPage() {
                 justifyContent: "center",
                 gap: "24px",
                 paddingTop: "32px",
-                borderTop: "1px solid #16161f",
+                borderTop: "1px solid var(--post-border)",
                 marginTop: "8px",
               }}
             >
@@ -332,16 +368,17 @@ function FeedPage() {
                   <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
               </button>
-              <span
-                style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: "10px",
-                  color: "#9090a8",
-                  letterSpacing: "0.1em",
-                }}
-              >
-                {page} / {data.pagination.totalPages}
-              </span>
+<span
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "10px",
+                    color: "var(--text-secondary)",
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {page} / {data.pagination.totalPages}
+                </span>
               <button
                 className="til-page-btn"
                 onClick={() => setPage((p) => p + 1)}

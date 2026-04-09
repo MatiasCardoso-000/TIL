@@ -6,6 +6,7 @@ import App from "./App.tsx";
 import "./index.css";
 import { AuthProvider } from "./context/AuthProvider.tsx";
 import { PostProvider } from "./context/PostProvider.tsx";
+import { ThemeProvider } from "./context/ThemeProvider.tsx";
 
 const queryClient = new QueryClient();
 
@@ -15,7 +16,9 @@ createRoot(document.getElementById("root")!).render(
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <PostProvider>
-            <App />
+            <ThemeProvider>
+              <App />
+            </ThemeProvider>
           </PostProvider>
         </AuthProvider>
       </QueryClientProvider>
