@@ -745,6 +745,13 @@ body {
   padding: 24px;
   margin-bottom: 32px;
   transition: background 0.3s ease, border-color 0.3s ease;
+  position: relative;
+}
+
+.profile-card-header {
+  position: absolute;
+  top: 16px;
+  right: 16px;
 }
 
 .profile-avatar {

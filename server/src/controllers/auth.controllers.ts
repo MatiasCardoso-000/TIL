@@ -40,7 +40,7 @@ const register = async (req: Request, res: Response): Promise<Response> => {
           : "username";
         return res
           .status(409)
-          .json({ errors:{ _general: [`Este ${field} ya está en uso`] }});
+          .json({ errors: { _general: [`Este ${field} ya está en uso`] } });
       }
       throw error;
     }
@@ -241,17 +241,15 @@ const refreshToken = async (req: Request, res: Response): Promise<Response> => {
   } catch (error) {
     console.error("[REFRESH TOKEN ERROR]", error);
 
-    return res
-      .status(401)
-      .json({ errors: "Invalid or expired refresh token" });
+    return res.status(401).json({ errors: "Invalid or expired refresh token" });
   }
 };
 
 const me = async (req: Request, res: Response): Promise<Response<User>> => {
   try {
-    const user= await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: req.userId! },
-      select: { 
+      select: {
         id: true,
         username: true,
         email: true,
@@ -272,10 +270,29 @@ const me = async (req: Request, res: Response): Promise<Response<User>> => {
   }
 };
 
+const update = async (req: Request, res: Response): Promise<Response<User>> => {
+  const { username, email, bio, avatarUrl } = req.body;
+
+  const user = await prisma.user.update({
+    data: {
+      username,
+      email,
+      bio,
+      avatarUrl,
+    },
+    where: {
+      id: req.userId!,
+    },
+  });
+
+  return res.status(200).json(user);
+};
+
 export const AuthControllers = {
   register,
   login,
   logout,
+  update,
   refreshToken,
   me,
 };

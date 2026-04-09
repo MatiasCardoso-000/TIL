@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { AuthControllers } from "../controllers/auth.controllers.js";
 import { validateSchema } from "../middlewares/validateSchema.js";
-import { loginSchema, registerSchema } from "../schemas/auth.schemas.js";
+import { loginSchema, registerSchema, updateUserSchema } from "../schemas/auth.schemas.js";
 import { authenticate } from "../middlewares/authenticate.js";
 import rateLimit from "express-rate-limit";
 
@@ -21,5 +21,6 @@ router.post(
 );
 router.post("/login",authLimiter, validateSchema(loginSchema), AuthControllers.login);
 router.post("/logout",authenticate, AuthControllers.logout);
+router.put("/profile",authenticate, validateSchema(updateUserSchema), AuthControllers.update);
 router.post("/refresh-token", AuthControllers.refreshToken);
 router.get("/me", authenticate, AuthControllers.me);
