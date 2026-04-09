@@ -196,3 +196,25 @@ Users can delete their own posts with immediate visual feedback. If the delete f
 
 What this does:
 Users can edit their posts inline without leaving the page. Changes are saved immediately with visual feedback, and validation errors appear if the content is invalid.
+
+## Profile Page
+
+### Profile page (`client/src/pages/ProfilePage.tsx`)
+
+- Displays user information: username, email, avatar, and bio.
+- Uses React Query `useQuery` to fetch user data from `GET /me`.
+- Uses React Query `useQuery` to fetch user's posts from `GET /posts?mine=true`.
+- Avatar uses `ui-avatars.com` as fallback when user has no avatar.
+- Styled with CSS classes: `.profile-card`, `.profile-avatar`, `.profile-info`, `.profile-username`, `.profile-email`, `.profile-bio`, `.profile-posts-title`, `.profile-post-item`, `.profile-post-content`, `.profile-post-meta`, `.profile-post-category`, `.profile-post-date`.
+
+What this does:
+Users can view their profile information and their own posts in one place.
+
+### Backend: Filter user's posts (`server/src/controllers/posts.controller.ts`)
+
+- Added support for `mine=true` query parameter in `GET /posts`.
+- When `mine === "true"`, filters posts by `req.userId`.
+- Both `findMany` and `count` queries use the conditional filter.
+
+What this does:
+The same endpoint can return all posts or only the current user's posts based on the query parameter.

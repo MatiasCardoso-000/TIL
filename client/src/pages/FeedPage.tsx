@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useApi } from "../lib/useApi";
+import { timeAgo } from "../utils/date";
 import Header from "../components/Header";
 import Form from "../components/Form";
 import type { PostsResponse } from "../types/types";
@@ -8,14 +9,6 @@ import type { PostsResponse } from "../types/types";
 type ErrorType = Error & {
   data?: unknown;
 };
-
-function timeAgo(dateStr: string): string {
-  const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
-  if (diff < 60) return "ahora";
-  if (diff < 3600) return `${Math.floor(diff / 60)}m`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
-  return `${Math.floor(diff / 86400)}d`;
-}
 
 function FeedPage() {
   const authFetch = useApi();

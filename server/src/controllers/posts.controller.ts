@@ -5,7 +5,7 @@ const createPost = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { content, category } = req.body;
     const userId = req.userId!;
-    
+
     const post = await prisma.post.create({
       data: { content, category, userId },
       select: {
@@ -37,6 +37,7 @@ const getPosts = async (req: Request, res: Response): Promise<Response> => {
   try {
     const page = Math.max(1, parseInt(req.query.page as string) || 1);
     const skip = (page - 1) * POSTS_PER_PAGE;
+    const { mine } = req.query;
 
     const [posts, total] = await prisma.$transaction([
       prisma.post.findMany({
@@ -52,8 +53,11 @@ const getPosts = async (req: Request, res: Response): Promise<Response> => {
             select: { id: true, username: true },
           },
         },
+        ...(mine === "true" && { where: { userId: req.userId! } }),
       }),
-      prisma.post.count(),
+      prisma.post.count({
+        ...(mine === "true" && { where: { userId: req.userId! } }),
+      }),
     ]);
 
     return res.status(200).json({
@@ -129,8 +133,7 @@ const updatePost = async (req: Request, res: Response): Promise<Response> => {
         throw e;
       });
 
-    if (!updatedPost)
-      return res.status(404).json({ errors: "Post not found" });
+    if (!updatedPost) return res.status(404).json({ errors: "Post not found" });
 
     return res.status(200).json({ updatedPost });
   } catch (error) {

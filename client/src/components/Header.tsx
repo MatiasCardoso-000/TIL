@@ -1,6 +1,7 @@
 import { useAuth } from "../hooks/useAuth";
 import { apiFetch } from "../lib/api";
 import { useTheme } from "../context/ThemeProvider";
+import { Link } from "react-router-dom";
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -25,8 +26,10 @@ export default function Header() {
         }}
       >
         <div style={{ display: "flex", alignItems: "baseline", gap: "10px" }}>
-          <span className="header-logo">TIL</span>
-          <span className="header-subtitle">Today I Learned</span>
+          <Link to="/">
+            <span className="header-logo">TIL</span>
+            <span className="header-subtitle">Today I Learned</span>
+          </Link>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
           <button
@@ -75,7 +78,10 @@ export default function Header() {
               </svg>
             )}
           </button>
-          <span className="header-username">@{user?.username}</span>
+          <Link to={"/profile"}>
+            <span className="header-username">@{user?.username}</span>
+          </Link>
+
           <button className="til-logout" onClick={handleLogout}>
             Salir
           </button>

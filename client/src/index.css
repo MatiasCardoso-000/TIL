@@ -733,3 +733,109 @@ body {
 .edit-action-btn--cancel:active {
   transform: scale(0.97);
 }
+
+/* ============================================
+   Profile Page
+   ============================================ */
+
+.profile-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent);
+  transition: border-color 0.3s ease;
+}
+
+.profile-info {
+  margin-top: 16px;
+}
+
+.profile-username {
+  font-family: 'Instrument Serif', serif;
+  font-size: 28px;
+  color: var(--text-primary);
+  line-height: 1.2;
+  transition: color 0.3s ease;
+}
+
+.profile-email {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  transition: color 0.3s ease;
+}
+
+.profile-bio {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 12px;
+  line-height: 1.6;
+  transition: color 0.3s ease;
+}
+
+.profile-posts-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.profile-post-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--post-border);
+  transition: border-color 0.3s ease;
+}
+
+.profile-post-item:last-child {
+  border-bottom: none;
+}
+
+.profile-post-content {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.7;
+  transition: color 0.3s ease;
+}
+
+.profile-post-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.profile-post-category {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  transition: color 0.3s ease;
+}
+
+.profile-post-date {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  transition: color 0.3s ease;
+}

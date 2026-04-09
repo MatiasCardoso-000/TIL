@@ -1,13 +1,14 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
-import FeedPage from './pages/FeedPage'
-import { useAuth } from './hooks/useAuth'
+import { Routes, Route, Navigate } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import FeedPage from "./pages/FeedPage";
+import { useAuth } from "./hooks/useAuth";
+import ProfilePage from "./pages/ProfilePage";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const { accessToken, isInitializing } = useAuth()
-  if (isInitializing) return null
-  return accessToken ? <>{children}</> : <Navigate to="/login" replace />
+  const { accessToken, isInitializing } = useAuth();
+  if (isInitializing) return null;
+  return accessToken ? <>{children}</> : <Navigate to="/login" replace />;
 }
 
 function App() {
@@ -23,9 +24,17 @@ function App() {
           </PrivateRoute>
         }
       />
+      <Route
+        path="/profile"
+        element={
+          <PrivateRoute>
+            <ProfilePage />
+          </PrivateRoute>
+        }
+      />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
-  )
+  );
 }
 
-export default App
+export default App;

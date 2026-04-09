@@ -2,7 +2,7 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  avatarUrl: string | null;
+  avatarUrl: string | undefined;
   bio: string | null;
   createdAt: Date;
 }
