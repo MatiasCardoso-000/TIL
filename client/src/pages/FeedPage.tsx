@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useApi } from "../lib/useApi";
 import { timeAgo } from "../utils/date";
@@ -21,18 +21,6 @@ function FeedPage() {
   const [editingPostId, setEditingPostId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState("");
   const MAX_CHARS = 280;
-
-  // Load distinctive fonts — avoid reflex fonts (IBM Plex Mono, Space Grotesk, etc.)
-  useEffect(() => {
-    const link = document.createElement("link");
-    link.href =
-      "https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap";
-    link.rel = "stylesheet";
-    document.head.appendChild(link);
-    return () => {
-      document.head.removeChild(link);
-    };
-  }, []);
 
   const updateMutationPost = useMutation({
     mutationFn: (postId) =>

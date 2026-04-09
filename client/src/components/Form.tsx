@@ -72,7 +72,7 @@ export default function Form() {
       <div
         style={{
           height: "1px",
-          background: "#16161f",
+          background: "var(--border)",
           margin: "12px 0",
         }}
       />
@@ -99,9 +99,9 @@ export default function Form() {
         <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
           <span
             style={{
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "'DM Sans', sans-serif",
               fontSize: "11px",
-              color: charsLeft <= 20 ? "#e85547" : "#9090a8",
+              color: charsLeft <= 20 ? "var(--error)" : "var(--text-tertiary)",
               transition: "color 0.2s",
               minWidth: "28px",
               textAlign: "right",
@@ -133,9 +133,9 @@ export default function Form() {
       {error && (
         <p
           style={{
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "'DM Sans', sans-serif",
             fontSize: "11px",
-            color: "#e85547",
+            color: "var(--error)",
             marginTop: "10px",
           }}
         >
