@@ -20,7 +20,7 @@ router.post(
   AuthControllers.register,
 );
 router.post("/login",authLimiter, validateSchema(loginSchema), AuthControllers.login);
-router.post("/logout",authenticate, AuthControllers.logout);
+router.post("/logout",AuthControllers.logout);
 router.put("/profile",authenticate, validateSchema(updateUserSchema), AuthControllers.update);
 router.post("/refresh-token", AuthControllers.refreshToken);
 router.get("/me", authenticate, AuthControllers.me);

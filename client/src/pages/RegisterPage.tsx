@@ -65,11 +65,7 @@ function RegisterPage() {
     >
       <form onSubmit={handleSubmit}>
         <div className="fade-3" style={{ marginBottom: "20px" }}>
-          <label
-            className="auth-label"
-          >
-            Usuario
-          </label>
+          <label className="auth-label">Usuario</label>
           <input
             className="auth-input"
             type="text"
@@ -107,7 +103,9 @@ function RegisterPage() {
               type="button"
               onClick={() => setShowPassword((v) => !v)}
               className="auth-password-btn"
-              aria-label={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
+              aria-label={
+                showPassword ? "Ocultar contraseña" : "Ver contraseña"
+              }
             >
               <EyeIcon open={showPassword} />
             </button>
@@ -149,7 +147,14 @@ function RegisterPage() {
             disabled={mutation.isPending}
             className="auth-btn"
           >
-            {mutation.isPending ? "Creando cuenta..." : "Crear cuenta →"}
+            <span
+             
+            >
+              {mutation.isPending && (
+                <span className="til-spinner" aria-hidden="true" />
+              )}
+              {mutation.isPending ? "Creando cuenta..." : "Crear cuenta →"}
+            </span>
           </button>
         </div>
       </form>

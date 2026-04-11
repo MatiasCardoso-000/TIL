@@ -160,7 +160,7 @@ const logout = async (req: Request, res: Response): Promise<Response> => {
       },
     });
 
-    res.clearCookie("refreshToken", refreshCookieOptions);
+    res.clearCookie("refreshToken");
 
     return res.status(200).json({});
   } catch (error) {

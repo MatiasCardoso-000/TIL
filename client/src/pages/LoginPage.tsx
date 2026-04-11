@@ -34,6 +34,7 @@ function LoginPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     mutation.mutate();
   };
 
@@ -91,7 +92,18 @@ function LoginPage() {
             disabled={mutation.isPending}
             className="auth-btn"
           >
-            {mutation.isPending ? "Iniciando sesión..." : "Iniciar sesión →"}
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
+            >
+              {mutation.isPending && (
+                <span className="til-spinner" aria-hidden="true" />
+              )}
+              {mutation.isPending ? "Iniciando sesión..." : "Iniciar sesión →"}
+            </span>
           </button>
         </div>
       </form>

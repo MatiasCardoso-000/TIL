@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useApi } from "../lib/useApi";
 import { timeAgo } from "../utils/date";
@@ -20,6 +20,8 @@ function FeedPage() {
   }>({});
   const [editingPostId, setEditingPostId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const MAX_CHARS = 280;
 
   const updateMutationPost = useMutation({
@@ -64,15 +66,27 @@ function FeedPage() {
     },
   });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (editContent.trim().length < 10) return;
-  };
-
   const { data, isLoading } = useQuery({
     queryKey: ["posts", page],
     queryFn: () => authFetch<PostsResponse>(`/posts?page=${page}`),
   });
+
+  const handleSubmit =  (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (editContent.trim().length < 10) return;
+  };
+
+  useEffect(() => {
+    if (isLoading) {
+      const timer = setTimeout(() => {
+        setIsSubmitting(true);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    } else {
+      setIsSubmitting(false);
+    }
+  }, [isLoading]);
 
   const CATEGORIES = [
     { value: "TECNOLOGIA", label: "Tecnología" },
@@ -117,7 +131,7 @@ function FeedPage() {
 
           {/* Feed */}
           <div className="fade-2">
-            {isLoading ? (
+            {isSubmitting && isLoading ? (
               <div
                 style={{
                   fontFamily: "'DM Sans', sans-serif",
@@ -129,7 +143,15 @@ function FeedPage() {
                   textTransform: "uppercase",
                 }}
               >
-                Cargando...
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <span className="til-spinner"></span>
+                </span>
               </div>
             ) : data?.posts.length === 0 ? (
               <div
@@ -245,7 +267,10 @@ function FeedPage() {
                           value={editContent}
                           rows={3}
                         ></textarea>
-                        <div className="flex gap-3" style={{ marginTop: "12px" }}>
+                        <div
+                          className="flex gap-3"
+                          style={{ marginTop: "12px" }}
+                        >
                           <button
                             aria-label="Guardar cambios"
                             className="edit-action-btn edit-action-btn--save"
@@ -349,17 +374,17 @@ function FeedPage() {
                   <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
               </button>
-<span
-                  style={{
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontSize: "10px",
-                    color: "var(--text-secondary)",
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {page} / {data.pagination.totalPages}
-                </span>
+              <span
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "10px",
+                  color: "var(--text-secondary)",
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                }}
+              >
+                {page} / {data.pagination.totalPages}
+              </span>
               <button
                 className="til-page-btn"
                 onClick={() => setPage((p) => p + 1)}
