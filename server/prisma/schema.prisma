@@ -21,6 +21,8 @@ model User {
   updatedAt   DateTime @updatedAt
   posts       Post[]
   refreshTokens RefreshToken[]
+  following   Follow[]  @relation("following")
+  followers  Follow[]  @relation("follower")
 
   @@map("users")
 }
@@ -54,6 +56,22 @@ model RefreshToken {
 // ─────────────────────────────────────────
 // CATEGORÍAS disponibles
 // ─────────────────────────────────────────
+// ─────────────────────────────────────────
+// FOLLOW (seguidores)
+// ─────────────────────────────────────────
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+  
+  follower    User     @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId]) // Un usuario solo puede seguir a otro una vez
+  @@map("follows")
+}
+
 enum Category {
   TECNOLOGIA
   CIENCIA

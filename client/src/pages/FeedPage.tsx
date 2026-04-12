@@ -5,6 +5,7 @@ import { timeAgo } from "../utils/date";
 import Header from "../components/Header";
 import Form from "../components/Form";
 import type { PostsResponse } from "../types/types";
+import { useUsers } from "../lib/users.api";
 
 type ErrorType = Error & {
   data?: unknown;
@@ -12,6 +13,7 @@ type ErrorType = Error & {
 
 function FeedPage() {
   const authFetch = useApi();
+  const getSuggedtedUsers = useUsers();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [error, setError] = useState(false);
@@ -21,7 +23,6 @@ function FeedPage() {
   const [editingPostId, setEditingPostId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const MAX_CHARS = 280;
 
   const updateMutationPost = useMutation({
@@ -66,12 +67,33 @@ function FeedPage() {
     },
   });
 
+  const followMutation = useMutation({
+    mutationFn: (userId: string) =>
+      authFetch(`/follow/${userId}`, {
+        method: "POST",
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["suggested-users"] });
+    },
+    onError: () => {
+      setError(true);
+      setTimeout(() => {
+        setError(false);
+      }, 4000);
+    },
+  });
+
   const { data, isLoading } = useQuery({
     queryKey: ["posts", page],
     queryFn: () => authFetch<PostsResponse>(`/posts?page=${page}`),
   });
 
-  const handleSubmit =  (e: React.FormEvent<HTMLFormElement>) => {
+  const { data: suggestedData, isLoading: isSuggestedLoading } = useQuery({
+    queryKey: ["suggested-users"],
+    queryFn: getSuggedtedUsers,
+  });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (editContent.trim().length < 10) return;
   };
@@ -106,7 +128,15 @@ function FeedPage() {
         <Header />
 
         <main
-          style={{ maxWidth: "600px", margin: "0 auto", padding: "32px 24px" }}
+          style={{
+            maxWidth: "1200px",
+            margin: "0 auto",
+            padding: "32px 24px",
+            display: "grid",
+            gridTemplateColumns: "240px minmax(0, 1fr)",
+            gap: "24px",
+            alignItems: "start",
+          }}
         >
           {error && (
             <div className="til-error">
@@ -115,22 +145,184 @@ function FeedPage() {
               </p>
             </div>
           )}
-          {/* Composer */}
-          <div className="fade-1" style={{ marginBottom: "40px" }}>
-            <div className="til-label">Nueva entrada</div>
-            <Form />
-            <div
-              aria-hidden="true"
-              style={{
-                height: "1px",
-                background: "var(--border)",
-                marginBottom: "16px",
-              }}
-            />
-          </div>
+          <aside className="fade-1" style={{ position: "sticky", top: "96px" }}>
+            <div className="til-label" style={{ marginBottom: "16px" }}>
+              Suggested users
+            </div>
+            {isSuggestedLoading ? (
+              <p
+                style={{
+                  margin: 0,
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "11px",
+                  color: "var(--text-secondary)",
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Loading suggestions...
+              </p>
+            ) : suggestedData?.users.length === 0 ? (
+              <p
+                style={{
+                  margin: 0,
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "11px",
+                  color: "var(--text-secondary)",
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                }}
+              >
+                No suggestions available.
+              </p>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {suggestedData?.users.map((user) => (
+                  <div
+                    key={user.id}
+                    className="til-post"
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "minmax(0, 1fr) auto",
+                      alignItems: "center",
+                      gap: "12px",
+                      padding: "14px 16px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        minWidth: 0,
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <div
+                        style={{
+                          minWidth: 0,
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          textAlign: "center",
+                          gap: "8px",
+                        }}
+                      >
+                        {user.avatarUrl ? (
+                          <img
+                            src={user.avatarUrl}
+                            alt={`Avatar de ${user.username}`}
+                            style={{
+                              width: "40px",
+                              height: "40px",
+                              borderRadius: "999px",
+                              objectFit: "cover",
+                              flexShrink: 0,
+                              border: "1px solid var(--border)",
+                            }}
+                          />
+                        ) : (
+                          <div
+                            aria-hidden="true"
+                            style={{
+                              width: "40px",
+                              height: "40px",
+                              borderRadius: "999px",
+                              display: "grid",
+                              placeItems: "center",
+                              flexShrink: 0,
+                              border: "1px solid var(--border)",
+                              background:
+                                "var(--surface, rgba(255,255,255,0.04))",
+                              color: "var(--text-secondary)",
+                              fontFamily: "'DM Sans', sans-serif",
+                              fontSize: "13px",
+                              fontWeight: 700,
+                            }}
+                          >
+                            {user.username.charAt(0).toUpperCase()}
+                          </div>
+                        )}
 
-          {/* Feed */}
-          <div className="fade-2">
+                        <p
+                          style={{
+                            margin: 0,
+                            fontFamily: "'DM Sans', sans-serif",
+                            fontSize: "13px",
+                            fontWeight: 600,
+                            color: "var(--text-primary)",
+                            lineHeight: 1.35,
+                            maxWidth: "100%",
+                            overflowWrap: "anywhere",
+                            wordBreak: "break-word",
+                          }}
+                        >
+                          @{user.username}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => followMutation.mutate(user.id)}
+                      disabled={followMutation.isPending}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        padding: "8px 12px",
+                        borderRadius: "999px",
+                        border: "1px solid var(--border)",
+                        background: "transparent",
+                        color: "var(--text-primary)",
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        cursor: followMutation.isPending
+                          ? "not-allowed"
+                          : "pointer",
+                        opacity: followMutation.isPending ? 0.7 : 1,
+                        flexShrink: 0,
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <line x1="19" y1="8" x2="19" y2="14" />
+                        <line x1="22" y1="11" x2="16" y2="11" />
+                      </svg>
+                      <span>
+                        {followMutation.isPending ? "Following..." : "Follow"}
+                      </span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </aside>
+
+          <section className="fade-2">
+            {/* Composer */}
+            <div style={{ marginBottom: "40px" }}>
+              <div className="til-label">Nueva entrada</div>
+              <Form />
+              <div
+                aria-hidden="true"
+                style={{
+                  height: "1px",
+                  background: "var(--border)",
+                  marginBottom: "16px",
+                }}
+              />
+            </div>
+
+            {/* Feed */}
             {isSubmitting && isLoading ? (
               <div
                 style={{
@@ -339,73 +531,73 @@ function FeedPage() {
                 ))}
               </div>
             )}
-          </div>
 
-          {/* Paginación */}
-          {data && data.pagination.totalPages > 1 && (
-            <div
-              className="fade-3"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "24px",
-                paddingTop: "32px",
-                borderTop: "1px solid var(--post-border)",
-                marginTop: "8px",
-              }}
-            >
-              <button
-                className="til-page-btn"
-                onClick={() => setPage((p) => p - 1)}
-                disabled={page === 1}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-              </button>
-              <span
+            {/* Paginación */}
+            {data && data.pagination.totalPages > 1 && (
+              <div
+                className="fade-3"
                 style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: "10px",
-                  color: "var(--text-secondary)",
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "24px",
+                  paddingTop: "32px",
+                  borderTop: "1px solid var(--post-border)",
+                  marginTop: "8px",
                 }}
               >
-                {page} / {data.pagination.totalPages}
-              </span>
-              <button
-                className="til-page-btn"
-                onClick={() => setPage((p) => p + 1)}
-                disabled={!data.pagination.hasNext}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                <button
+                  className="til-page-btn"
+                  onClick={() => setPage((p) => p - 1)}
+                  disabled={page === 1}
                 >
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </button>
-            </div>
-          )}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                </button>
+                <span
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "10px",
+                    color: "var(--text-secondary)",
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {page} / {data.pagination.totalPages}
+                </span>
+                <button
+                  className="til-page-btn"
+                  onClick={() => setPage((p) => p + 1)}
+                  disabled={!data.pagination.hasNext}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
+              </div>
+            )}
+          </section>
         </main>
       </div>
     </>

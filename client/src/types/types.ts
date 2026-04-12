@@ -31,3 +31,10 @@ export interface PostsResponse {
     hasNext: boolean;
   };
 }
+
+export interface SuggestedUser {
+  id: string;
+  username: string;
+  avatarUrl: string | null;
+  bio: string | null;
+}

@@ -56,3 +56,8 @@ export type Post = Prisma.PostModel
  * 
  */
 export type RefreshToken = Prisma.RefreshTokenModel
+/**
+ * Model Follow
+ * 
+ */
+export type Follow = Prisma.FollowModel

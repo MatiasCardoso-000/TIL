@@ -4,6 +4,8 @@ import type { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { router as AuthRoutes } from "./routes/auth.routes.js";
 import { router as PostsRoutes } from "./routes/posts.routes.js";
+import { router as FollowRoutes } from "./routes/follow.routes.js";
+import { router as UsersRoutes } from "./routes/users.routes.js";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import prisma from "./lib/prisma.js";
@@ -25,6 +27,8 @@ app.get("/health", (req, res) => {
 
 app.use("/api", AuthRoutes);
 app.use("/api/posts", PostsRoutes);
+app.use("/api/follow", FollowRoutes);
+app.use("/api/users", UsersRoutes);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(["ERROR HANDLING"], err);
