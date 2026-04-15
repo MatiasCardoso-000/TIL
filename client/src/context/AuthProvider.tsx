@@ -11,6 +11,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
   const initialized = useRef(false);
 
+
   const login = (user: User, accessToken: string) => {
     setAuth({ user, accessToken });
   };
