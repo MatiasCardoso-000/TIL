@@ -25,6 +25,9 @@ A detailed walkthrough of every improvement made to the backend of this project,
 17. [Paginated Posts Feed](#17-paginated-posts-feed)
 18. [Database Schema Improvements](#18-database-schema-improvements)
 19. [Project Structure & Separation of Concerns](#19-project-structure--separation-of-concerns)
+20. [Follow System](#20-follow-system)
+21. [Suggested Users Endpoint](#21-suggested-users-endpoint)
+22. [End-to-End Follow Flow](#22-end-to-end-follow-flow)
 
 ---
 
@@ -480,6 +483,157 @@ Separation of concerns makes the codebase maintainable and testable:
 
 ---
 
+## 20. Follow System
+
+**Files:** `server/prisma/schema.prisma`, `server/src/controllers/follow.controller.ts`, `server/src/routes/follow.routes.ts`
+
+### What changed
+The backend now supports following relationships between users with a dedicated `Follow` model and four endpoints:
+
+- `POST /api/follow/:userId` → follow a user
+- `DELETE /api/follow/:userId` → unfollow a user
+- `GET /api/follow/followers/:userId` → list followers of a user
+- `GET /api/follow/following/:userId` → list accounts a user follows
+
+The Prisma schema adds a join model:
+
+```ts
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower    User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+```
+
+### What each endpoint does
+- **follow** → creates the relationship from the authenticated user to the target user.
+- **unfollow** → removes that relationship.
+- **getFollowers** → answers "who follows this user?".
+- **getFollowing** → answers "who is this user following?".
+
+### Important protections in this feature
+- A user cannot follow themselves.
+- The server checks that the target user exists before creating the relationship.
+- The server checks whether the relationship already exists before creating it.
+- The composite unique constraint enforces uniqueness at the database level even if application logic fails.
+- `onDelete: Cascade` prevents orphaned follow rows if a user is deleted.
+
+### Why it matters
+This model turns "follow" into an explicit database relationship instead of an ad-hoc array or frontend-only state. That matters because:
+
+- queries become predictable,
+- integrity is enforced by the database,
+- and follow/follower lists can be built efficiently and safely.
+
+### Why this design is worth learning
+This is a classic **many-to-many relationship with extra meaning**:
+- one user can follow many users,
+- one user can be followed by many users,
+- and the `Follow` row itself is the relationship.
+
+This pattern appears everywhere: friendships, likes, memberships, bookmarks, enrollments, tags, and subscriptions.
+
+---
+
+## 21. Suggested Users Endpoint
+
+**File:** `server/src/controllers/users.controller.ts`
+
+### What changed
+The backend now exposes `GET /api/users/suggested` for authenticated users.
+
+The endpoint:
+- reads the authenticated user ID from `req.userId`,
+- fetches the IDs of users that current user already follows,
+- excludes those IDs from the result,
+- excludes the current user,
+- returns up to 10 users.
+
+Conceptually the logic is:
+
+```ts
+1. find the IDs I already follow
+2. fetch users where:
+   - id is not me
+   - id is not in the followed list
+3. take 10
+```
+
+### What it returns
+Only basic user fields are selected:
+
+- `id`
+- `username`
+- `avatarUrl`
+- `bio`
+
+### Why it matters
+This gives the frontend a discovery feature without forcing it to download every user and filter in the browser.
+
+That matters for three reasons:
+- **performance** → less data over the network
+- **security/privacy** → the client only receives the fields it actually needs
+- **correctness** → the filtering rule lives in one place, on the server
+
+### Why this is a good backend pattern to study
+The endpoint is not changing data. It is a **derived read model**:
+
+- it combines auth context,
+- relationship data,
+- filtering logic,
+- and field selection,
+
+to answer a product question: **"Who should this user see right now?"**
+
+That is a very common backend responsibility.
+
+---
+
+## 22. End-to-End Follow Flow
+
+### What happens across the whole stack
+
+1. The frontend asks `GET /api/users/suggested`.
+2. The backend computes which users the current user does not already follow.
+3. The frontend renders those users in the feed sidebar.
+4. The user clicks `Follow`.
+5. The frontend sends `POST /api/follow/:userId`.
+6. The backend validates the action:
+   - user is authenticated,
+   - target is not self,
+   - target exists,
+   - relationship does not already exist.
+7. The backend inserts a row into `follows`.
+8. The frontend invalidates the suggestions query.
+9. The frontend requests `GET /api/users/suggested` again.
+10. The followed user is no longer returned, so the UI updates naturally.
+
+### Why this matters
+This is a complete example of how frontend and backend responsibilities should be split:
+
+- **frontend** handles interaction and rendering,
+- **backend** owns business rules and filtering,
+- **database** enforces relationship integrity.
+
+### Why this is useful for learning architecture
+This flow shows three different types of responsibility working together:
+
+- **UI responsibility** → handle click, loading, and refresh
+- **API responsibility** → validate and execute the action
+- **DB responsibility** → guarantee uniqueness and referential integrity
+
+If one layer tries to do everything, the system becomes fragile.
+If each layer does its job well, the feature stays simple.
+
+---
+
 ## Summary
 
 | Category | Improvements |
@@ -490,4 +644,4 @@ Separation of concerns makes the codebase maintainable and testable:
 | Database | Cascade deletes, VarChar constraints, updatedAt, CUID, expiresAt |
 | Reliability | Global error handler, graceful shutdown, Prisma error codes |
 | Performance | Pagination with count transaction |
-| Architecture | Separation of concerns, reusable middleware, utils |
+| Architecture | Separation of concerns, reusable middleware, utils, follow relationships, derived discovery endpoint |

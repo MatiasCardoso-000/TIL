@@ -40,9 +40,13 @@ export function SkeletonProfile() {
   return (
     <div className="skeleton-profile">
       <Skeleton width={80} height={80} rounded className="mb-4" />
-      <Skeleton width={120} height={24} className="mb-2" />
-      <Skeleton width={200} height={14} className="mb-4" />
-      <Skeleton height={60} />
+      <Skeleton width={140} height={22} className="mb-3" />
+      <div className="flex gap-4 mb-3">
+        <Skeleton width={90} height={14} />
+        <Skeleton width={90} height={14} />
+      </div>
+      <Skeleton width={180} height={14} className="mb-2" />
+      <Skeleton width={240} height={14} />
     </div>
   );
 }

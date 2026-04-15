@@ -1,11 +1,12 @@
 import { useAuth } from "../hooks/useAuth";
 import { apiFetch } from "../lib/api";
 import { useTheme } from "../context/ThemeProvider";
-import { Link } from "react-router-dom";
+import { Link  } from "react-router-dom";
 
 export default function Header() {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+
 
   const handleLogout = async () => {
     await apiFetch("/logout", { method: "POST" }).catch(() => {});
@@ -78,7 +79,7 @@ export default function Header() {
               </svg>
             )}
           </button>
-          <Link to={"/profile"}>
+          <Link to={`/profile/${user?.id}`}>
             <span className="header-username">@{user?.username}</span>
           </Link>
 

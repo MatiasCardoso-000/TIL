@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AuthContext,  } from "./AuthContext";
+import { AuthContext } from "./AuthContext";
 import { apiFetch } from "../lib/api";
 import type { AuthState, User } from "../types/types";
 
@@ -41,7 +41,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
 
         setAuth({ user, accessToken: token.accessToken });
-      } catch (error: any ) {
+      } catch (error: any) {
+        setAuth({ user: null, accessToken: null });
         if (error.name === "AbortError") return;
       } finally {
         setIsInitializing(false);

@@ -6,3 +6,4 @@ export const router = Router();
 
 // Get suggested users to follow
 router.get("/suggested", authenticate, UsersController.getSuggested);
+router.get("/:userId",authenticate, UsersController.getUserProfile);

@@ -270,6 +270,8 @@ const me = async (req: Request, res: Response): Promise<Response<User>> => {
   }
 };
 
+
+
 const update = async (req: Request, res: Response): Promise<Response<User>> => {
   const { username, email, bio, avatarUrl } = req.body;
 

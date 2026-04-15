@@ -95,10 +95,8 @@ const getFollowers = async (req: Request, res: Response) => {
         },
       },
     });
-
-    return res.status(200).json({
-      followers: followers.map((f) => f.follower),
-    });
+    const userFollowers = followers.map((f) => f.follower);
+    return res.status(200).json(userFollowers);
   } catch (error) {
     console.error("[ERROR GET FOLLOWERS]", error);
     return res.status(500).json({ message: "Error interno" });
@@ -123,9 +121,9 @@ const getFollowing = async (req: Request, res: Response) => {
       },
     });
 
-    return res.status(200).json({
-      following: following.map((f) => f.following),
-    });
+    const userFollowing = following.map((f) => f.following);
+
+    return res.status(200).json(userFollowing);
   } catch (error) {
     console.error("[ERROR GET FOLLOWING]", error);
     return res.status(500).json({ message: "Error interno" });
@@ -136,5 +134,5 @@ export const FollowController = {
   follow,
   unfollow,
   getFollowers,
-  getFollowing
+  getFollowing,
 };

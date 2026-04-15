@@ -1,5 +1,6 @@
 import prisma from "../lib/prisma.js";
 import type { Request, Response } from "express";
+import type { User } from "../types/types.js";
 
 const getSuggested = async (req: Request, res: Response) => {
   try {
@@ -37,6 +38,39 @@ const getSuggested = async (req: Request, res: Response) => {
   }
 };
 
+const getUserProfile = async (
+  req: Request,
+  res: Response,
+): Promise<Response<User>> => {
+  try {
+    const userId = req.params.userId as string;
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        username: true,
+        id: true,
+        email: true,
+        avatarUrl: true,
+        bio: true,
+        createdAt: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ errors: "User not found" });
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error("[ME ERROR]", error);
+    return res.status(500).json({ errors: "Internal Server Error" });
+  }
+};
+
 export const UsersController = {
   getSuggested,
+  getUserProfile,
 };

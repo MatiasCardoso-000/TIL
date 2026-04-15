@@ -37,10 +37,13 @@ const getPosts = async (req: Request, res: Response): Promise<Response> => {
   try {
     const page = Math.max(1, parseInt(req.query.page as string) || 1);
     const skip = (page - 1) * POSTS_PER_PAGE;
-    const { mine } = req.query;
+    const userId = req.query.userId as string;
 
     const [posts, total] = await prisma.$transaction([
       prisma.post.findMany({
+        where: {
+          userId: userId,
+        },
         skip,
         take: POSTS_PER_PAGE,
         orderBy: { createdAt: "desc" },
@@ -53,10 +56,11 @@ const getPosts = async (req: Request, res: Response): Promise<Response> => {
             select: { id: true, username: true },
           },
         },
-        ...(mine === "true" && { where: { userId: req.userId! } }),
       }),
       prisma.post.count({
-        ...(mine === "true" && { where: { userId: req.userId! } }),
+        where: {
+          userId: userId,
+        },
       }),
     ]);
 

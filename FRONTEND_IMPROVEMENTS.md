@@ -24,6 +24,26 @@ It gives the app one consistent place to handle JSON requests, cookies and backe
 What this does:
 It keeps protected requests simple. Components can call `authFetch(...)` without manually assembling auth headers every time.
 
+### `useUsers` (`client/src/lib/users.api.ts`)
+
+- `useUsers` uses `useApi`, so requests to the users suggestion endpoint include the current access token.
+- It returns a `getSuggedtedUsers()` function that sends `GET /users/suggested`.
+- The response shape used by the frontend is `{ users: SuggestedUser[] }`.
+- `SuggestedUser` currently includes `id`, `username`, `avatarUrl` and `bio`.
+
+What this does:
+It gives the feed a small domain-specific helper for discovery data without duplicating authenticated fetch logic inside the page.
+
+Why this matters for learning:
+- `apiFetch` solves generic HTTP concerns.
+- `useApi` solves authenticated requests.
+- `useUsers` solves one feature-specific use case: user discovery.
+
+That separation is useful because each layer has one responsibility:
+- **transport layer** → `apiFetch`
+- **auth layer** → `useApi`
+- **feature layer** → `useUsers`
+
 ## Authentication State
 
 ### `AuthProvider` (`client/src/context/AuthProvider.tsx`)
@@ -44,9 +64,29 @@ The app can restore a logged-in session after a page refresh without exposing th
 - `POST /refresh-token` returns `{ accessToken }`.
 - `GET /me` returns the authenticated `User` object with `id`, `username`, `email`, `avatarUrl`, `bio` and `createdAt`.
 - `POST /logout` clears the server-side session path by revoking the refresh token and the frontend then clears in-memory auth state.
+- `POST /follow/:userId` creates a follow relationship for the current user.
+- `DELETE /follow/:userId` removes that follow relationship.
+- `GET /follow/followers/:userId` returns `{ followers }` with basic user data.
+- `GET /follow/following/:userId` returns `{ following }` with basic user data.
+- `GET /users/suggested` returns `{ users }` with up to 10 users the current user does not already follow and excludes the current user.
 
 What this does:
 The frontend works with a short-lived access token in memory and relies on the secure cookie only for session recovery.
+
+What each follow-related endpoint is for:
+- `POST /follow/:userId` → creates the relationship when the current user clicks **Follow**.
+- `DELETE /follow/:userId` → removes the relationship when the current user wants to unfollow.
+- `GET /follow/followers/:userId` → answers **"who follows this user?"**.
+- `GET /follow/following/:userId` → answers **"who is this user following?"**.
+- `GET /users/suggested` → answers **"who could this user follow next?"**.
+
+This is a good pattern to notice:
+- **relationship endpoints** live under `/follow`
+- **discovery endpoint** lives under `/users`
+
+That means the API distinguishes between:
+- managing a follow relationship,
+- and discovering users as a separate concern.
 
 ## Routing And Route Protection
 
@@ -110,7 +150,9 @@ Registration can show multiple validation issues at once instead of collapsing t
 
 - The feed is protected and fetched through `useApi`, so requests include the current access token.
 - Posts are loaded with React Query using the key `["posts", page]`.
+- Suggested users are loaded with a separate React Query request using the key `["suggested-users"]`.
 - The page sends `GET /posts?page=<page>` and expects `{ posts, pagination }`.
+- The page also sends `GET /users/suggested` and expects `{ users }`.
 - Pagination UI uses `pagination.totalPages` and `pagination.hasNext` to enable/disable navigation.
 - Empty and loading states are rendered directly in the page.
 - Post timestamps are formatted into compact relative labels such as `ahora`, `5m`, `2h` or `3d`.
@@ -118,11 +160,44 @@ Registration can show multiple validation issues at once instead of collapsing t
 What this does:
 The feed stays simple to navigate and only asks the backend for one page of posts at a time.
 
+Why the page uses two queries instead of one:
+- `posts` and `suggested-users` change for different reasons.
+- A new follow should refresh suggestions, but it does not need to refetch the posts list.
+- Keeping separate query keys makes cache invalidation more precise.
+
+### Suggested users sidebar (`client/src/pages/FeedPage.tsx`)
+
+- The feed layout now uses a two-column desktop grid: a narrow left sidebar and a wider posts column.
+- The left sidebar is sticky (`top: 96px`) so suggested users stay visible while scrolling the feed.
+- Each suggested user card shows:
+  - avatar image when `avatarUrl` exists,
+  - a circular initial fallback when the user has no avatar,
+  - the username centered under the avatar,
+  - a `Follow` button with an inline SVG icon.
+- Long usernames are explicitly wrapped with `overflowWrap: "anywhere"` and `wordBreak: "break-word"` so they do not overlap the follow button.
+- The bio is no longer rendered in the current suggested-user card layout.
+- The sidebar shows dedicated loading and empty states: `Loading suggestions...` and `No suggestions available.`.
+
+What this does:
+It adds a lightweight discovery surface inside the feed so users can find profiles to follow without leaving the main timeline.
+
+What each part of the card does:
+- **avatar** → gives quick visual identity.
+- **initial fallback** → avoids broken or empty UI when there is no uploaded avatar.
+- **username** → identifies the profile clearly.
+- **follow button** → turns discovery into an immediate action.
+
+Why the layout is built this way:
+- sidebar stays narrow so the feed remains the primary content,
+- sticky positioning keeps suggestions visible while reading posts,
+- centered avatar + username makes the small card easier to scan visually.
+
 ### Visual styling in the feed
 
 - The page injects Google Fonts (`IBM Plex Mono` and `Instrument Serif`) on mount.
 - It defines its visual system inline: dark grid background, sticky glass-like header, category badges and subtle fade animations.
 - Categories are mapped from backend enum values such as `TECNOLOGIA` to readable Spanish labels such as `Tecnologia`.
+- The feed content area now prioritizes the posts column visually by using a `240px minmax(0, 1fr)` grid instead of a single narrow centered column.
 
 What this does:
 The feed has a custom editorial look instead of a default scaffolded UI, and backend enum values are turned into readable labels for people.
@@ -179,6 +254,63 @@ Current UX improvements are mainly concentrated in authentication. The earlier p
 
 What this does:
 Users can delete their own posts with immediate visual feedback. If the delete fails, a clear error message appears and disappears automatically.
+
+## Follow Suggestions And Follow Action
+
+### Follow mutation in the feed (`client/src/pages/FeedPage.tsx`)
+
+- The feed defines a React Query mutation for `POST /follow/{userId}`.
+- When follow succeeds, it invalidates `["suggested-users"]` so the sidebar refetches and removes the newly followed user from suggestions.
+- When follow fails, it reuses the same top-level feed error banner used by delete failures.
+- The current loading state is mutation-wide, so while one follow request is pending all follow buttons share the disabled/loading state.
+
+What this does:
+The suggestion list stays in sync with the backend after a follow action without manually editing cached user arrays.
+
+How the flow works step by step:
+1. User clicks `Follow`.
+2. The mutation sends `POST /follow/{userId}`.
+3. If the backend succeeds, React Query invalidates `["suggested-users"]`.
+4. The sidebar refetches fresh data.
+5. The followed user disappears from the suggestions list because they no longer match the backend filter.
+
+Why this approach is useful for learning:
+- the backend remains the source of truth,
+- the frontend avoids duplicating filter logic,
+- and cache invalidation is simpler than manually synchronizing UI state.
+
+## End-to-End Follow Flow
+
+### What happens when the user follows someone from the feed
+
+1. The feed renders the **Suggested users** sidebar from `GET /users/suggested`.
+2. The user clicks the `Follow` button on one suggestion card.
+3. `FeedPage` runs the follow mutation and sends `POST /follow/:userId`.
+4. If the request succeeds, React Query invalidates `["suggested-users"]`.
+5. The sidebar fetches fresh suggestions from the backend.
+6. The followed user disappears from the list because they are no longer eligible for the suggestion query.
+
+What this does:
+It creates a complete loop where the UI reacts to a successful follow without page reloads or manual DOM updates.
+
+Why this flow is a good pattern to study:
+- **UI event** starts the action.
+- **mutation** performs the write operation.
+- **query invalidation** refreshes dependent read data.
+- **backend filter logic** stays centralized on the server.
+
+This is one of the most common real-world frontend patterns:
+- read data with a query,
+- change data with a mutation,
+- refresh the affected query after success.
+
+### Mental model for this feature
+
+- **Query** = "give me the current truth"
+- **Mutation** = "change the truth"
+- **Invalidation** = "re-check the truth after the change"
+
+If you internalize that model, React Query starts making a lot more sense.
 
 ## Post Editing (Inline)
 

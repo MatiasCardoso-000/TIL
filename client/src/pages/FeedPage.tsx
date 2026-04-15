@@ -6,6 +6,8 @@ import Header from "../components/Header";
 import Form from "../components/Form";
 import type { PostsResponse } from "../types/types";
 import { useUsers } from "../lib/users.api";
+import { useAuth } from "../hooks/useAuth";
+import { Link } from "react-router-dom";
 
 type ErrorType = Error & {
   data?: unknown;
@@ -13,6 +15,7 @@ type ErrorType = Error & {
 
 function FeedPage() {
   const authFetch = useApi();
+  const { user } = useAuth();
   const getSuggedtedUsers = useUsers();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
@@ -20,7 +23,7 @@ function FeedPage() {
   const [fieldErrors, setFieldErrors] = useState<{
     content?: string[];
   }>({});
-  const [editingPostId, setEditingPostId] = useState<number | null>(null);
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const MAX_CHARS = 280;
@@ -31,7 +34,7 @@ function FeedPage() {
         method: "PUT",
         body: JSON.stringify({ content: editContent }),
       }),
-    onSuccess: (_: unknown, postId: number) => {
+    onSuccess: (_: unknown, postId: string) => {
       queryClient.setQueryData(["posts", page], (old: PostsResponse) => ({
         ...old,
         posts: old.posts.map((p) => {
@@ -53,7 +56,7 @@ function FeedPage() {
       authFetch(`/posts/${postId}`, {
         method: "DELETE",
       }),
-    onSuccess: (_: unknown, postId: number) => {
+    onSuccess: (_: unknown, postId: string) => {
       queryClient.setQueryData(["posts", page], (old: PostsResponse) => ({
         ...old,
         posts: old.posts.filter((post) => post.id !== postId),
@@ -106,7 +109,7 @@ function FeedPage() {
 
       return () => clearTimeout(timer);
     } else {
-      setIsSubmitting(false);
+      return () => setIsSubmitting(false);
     }
   }, [isLoading]);
 
@@ -196,68 +199,70 @@ function FeedPage() {
                         justifyContent: "center",
                       }}
                     >
-                      <div
-                        style={{
-                          minWidth: 0,
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          textAlign: "center",
-                          gap: "8px",
-                        }}
-                      >
-                        {user.avatarUrl ? (
-                          <img
-                            src={user.avatarUrl}
-                            alt={`Avatar de ${user.username}`}
-                            style={{
-                              width: "40px",
-                              height: "40px",
-                              borderRadius: "999px",
-                              objectFit: "cover",
-                              flexShrink: 0,
-                              border: "1px solid var(--border)",
-                            }}
-                          />
-                        ) : (
-                          <div
-                            aria-hidden="true"
-                            style={{
-                              width: "40px",
-                              height: "40px",
-                              borderRadius: "999px",
-                              display: "grid",
-                              placeItems: "center",
-                              flexShrink: 0,
-                              border: "1px solid var(--border)",
-                              background:
-                                "var(--surface, rgba(255,255,255,0.04))",
-                              color: "var(--text-secondary)",
-                              fontFamily: "'DM Sans', sans-serif",
-                              fontSize: "13px",
-                              fontWeight: 700,
-                            }}
-                          >
-                            {user.username.charAt(0).toUpperCase()}
-                          </div>
-                        )}
-
-                        <p
+                      <Link to={`/profile/${user.id}`}>
+                        <div
                           style={{
-                            margin: 0,
-                            fontFamily: "'DM Sans', sans-serif",
-                            fontSize: "13px",
-                            fontWeight: 600,
-                            color: "var(--text-primary)",
-                            lineHeight: 1.35,
-                            maxWidth: "100%",
-                            overflowWrap: "anywhere",
-                            wordBreak: "break-word",
+                            minWidth: 0,
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            textAlign: "center",
+                            gap: "8px",
                           }}
                         >
-                          @{user.username}
-                        </p>
-                      </div>
+                          {user.avatarUrl ? (
+                            <img
+                              src={user.avatarUrl}
+                              alt={`Avatar de ${user.username}`}
+                              style={{
+                                width: "40px",
+                                height: "40px",
+                                borderRadius: "999px",
+                                objectFit: "cover",
+                                flexShrink: 0,
+                                border: "1px solid var(--border)",
+                              }}
+                            />
+                          ) : (
+                            <div
+                              aria-hidden="true"
+                              style={{
+                                width: "40px",
+                                height: "40px",
+                                borderRadius: "999px",
+                                display: "grid",
+                                placeItems: "center",
+                                flexShrink: 0,
+                                border: "1px solid var(--border)",
+                                background:
+                                  "var(--surface, rgba(255,255,255,0.04))",
+                                color: "var(--text-secondary)",
+                                fontFamily: "'DM Sans', sans-serif",
+                                fontSize: "13px",
+                                fontWeight: 700,
+                              }}
+                            >
+                              {user.username.charAt(0).toUpperCase()}
+                            </div>
+                          )}
+
+                          <p
+                            style={{
+                              margin: 0,
+                              fontFamily: "'DM Sans', sans-serif",
+                              fontSize: "13px",
+                              fontWeight: 600,
+                              color: "var(--text-primary)",
+                              lineHeight: 1.35,
+                              maxWidth: "100%",
+                              overflowWrap: "anywhere",
+                              wordBreak: "break-word",
+                            }}
+                          >
+                            @{user.username}
+                          </p>
+                        </div>
+                      </Link>
                     </div>
                     <button
                       onClick={() => followMutation.mutate(user.id)}
@@ -381,7 +386,7 @@ function FeedPage() {
                               fontWeight: 500,
                             }}
                           >
-                            @{post.user.username}
+                            <Link to={`/profile/${post.user}`}>@{post.user.username}</Link>
                           </span>
                           <span className="til-category">
                             {CATEGORIES.find((c) => c.value === post.category)
@@ -390,51 +395,57 @@ function FeedPage() {
                         </div>
                         <div className="flex gap-4">
                           <span>
-                            <button
-                              aria-label="Eliminar post"
-                              className="post-action-btn"
-                              onClick={() => deletePostMutation.mutate(post.id)}
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+                            {post.user.id === user?.id && (
+                              <button
+                                aria-label="Eliminar post"
+                                className="post-action-btn"
+                                onClick={() =>
+                                  deletePostMutation.mutate(post.id)
+                                }
                               >
-                                <polyline points="3 6 5 6 21 6"></polyline>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                              </svg>
-                            </button>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="14"
+                                  height="14"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <polyline points="3 6 5 6 21 6"></polyline>
+                                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                              </button>
+                            )}
                           </span>
                           <span>
-                            <button
-                              aria-label="Editar post"
-                              className="post-action-btn"
-                              onClick={() => {
-                                setEditingPostId(post.id);
-                                setEditContent(post.content);
-                              }}
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+                            {post.user.id === user?.id && (
+                              <button
+                                aria-label="Editar post"
+                                className="post-action-btn"
+                                onClick={() => {
+                                  setEditingPostId(post.id);
+                                  setEditContent(post.content);
+                                }}
                               >
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                              </svg>
-                            </button>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="14"
+                                  height="14"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                              </button>
+                            )}
                           </span>
                         </div>
                       </div>
