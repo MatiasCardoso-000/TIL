@@ -2,8 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useApi } from "../lib/useApi";
 import type { PostsResponse } from "../types/types";
 import { usePosts } from "../hooks/usePosts";
-import { useState} from "react";
-
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function Form() {
   const MAX_CHARS = 280;
@@ -24,6 +24,7 @@ export default function Form() {
       setContent("");
       setCategory("TECNOLOGIA");
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      toast.success("Post creado con exito");
     },
   });
 
@@ -145,10 +146,3 @@ export default function Form() {
     </form>
   );
 }
-
-
-
-
-
-
-  

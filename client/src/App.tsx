@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage";
 import FeedPage from "./pages/FeedPage";
 import { useAuth } from "./hooks/useAuth";
 import ProfilePage from "./pages/ProfilePage";
+import { Toaster } from "sonner";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { accessToken, isInitializing } = useAuth();
@@ -25,27 +26,31 @@ function App() {
     };
   }, []);
   return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route
-        path="/"
-        element={
-          <PrivateRoute>
-            <FeedPage />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/profile/:userId"
-        element={
-          <PrivateRoute>
-            <ProfilePage />
-          </PrivateRoute>
-        }
-      />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <>
+      <Toaster />
+
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <FeedPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile/:userId"
+          element={
+            <PrivateRoute>
+              <ProfilePage />
+            </PrivateRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   );
 }
 

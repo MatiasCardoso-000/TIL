@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { SkeletonProfile } from "../components/Skeleton";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
   const authFetch = useApi();
@@ -42,6 +43,10 @@ export default function ProfilePage() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["followers"] });
+      toast.success("Has dejado de seguir al usuario");
+    },
+    onError: () => {
+      toast.error("Error al intentar dejars de seguir al usuario");
     },
   });
 
@@ -52,6 +57,10 @@ export default function ProfilePage() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["followers"] });
+      toast.success("Usuario seguido");
+    },
+    onError: () => {
+      toast.error("Error al intentar seguir al usuario");
     },
   });
 
@@ -85,18 +94,30 @@ export default function ProfilePage() {
     enabled: !!userId,
   });
 
-  if (isError) return (
-    <div className="til-bg" style={{ minHeight: "100vh" }}>
-      <Header />
-      <main style={{ maxWidth: "600px", margin: "0 auto", padding: "32px 24px" }}>
-        <div className="profile-card" style={{ textAlign: "center", padding: "40px 24px" }}>
-          <p style={{ fontFamily: "'DM Sans', sans-serif", color: "var(--error)", fontSize: "14px" }}>
-            No se pudo cargar el perfil. Intentá de nuevo más tarde.
-          </p>
-        </div>
-      </main>
-    </div>
-  );
+  if (isError)
+    return (
+      <div className="til-bg" style={{ minHeight: "100vh" }}>
+        <Header />
+        <main
+          style={{ maxWidth: "600px", margin: "0 auto", padding: "32px 24px" }}
+        >
+          <div
+            className="profile-card"
+            style={{ textAlign: "center", padding: "40px 24px" }}
+          >
+            <p
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                color: "var(--error)",
+                fontSize: "14px",
+              }}
+            >
+              No se pudo cargar el perfil. Intentá de nuevo más tarde.
+            </p>
+          </div>
+        </main>
+      </div>
+    );
 
   return (
     <>

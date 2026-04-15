@@ -8,6 +8,7 @@ import type { PostsResponse } from "../types/types";
 import { useUsers } from "../lib/users.api";
 import { useAuth } from "../hooks/useAuth";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 type ErrorType = Error & {
   data?: unknown;
@@ -19,7 +20,6 @@ function FeedPage() {
   const getSuggedtedUsers = useUsers();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
-  const [error, setError] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<{
     content?: string[];
   }>({});
@@ -44,6 +44,7 @@ function FeedPage() {
       setEditingPostId(null);
       setEditContent("");
       setFieldErrors({});
+      toast.success("Post actualizado con exito");
     },
     onError: (err: ErrorType) =>
       setFieldErrors(
@@ -61,12 +62,11 @@ function FeedPage() {
         ...old,
         posts: old.posts.filter((post) => post.id !== postId),
       }));
+
+      toast.success("Post eliminado con exito");
     },
     onError: () => {
-      setError(true);
-      setTimeout(() => {
-        setError(false);
-      }, 4000);
+      toast.error("No se pudo eliminar el post");
     },
   });
 
@@ -77,12 +77,10 @@ function FeedPage() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["suggested-users"] });
+      toast.success("Usuario seguido");
     },
     onError: () => {
-      setError(true);
-      setTimeout(() => {
-        setError(false);
-      }, 4000);
+      toast.error("No se pudo seguir al usuario");
     },
   });
 
@@ -141,13 +139,6 @@ function FeedPage() {
             alignItems: "start",
           }}
         >
-          {error && (
-            <div className="til-error">
-              <p className="til-error__text ">
-                Hubo un error. Por favor intenta de nuevo.
-              </p>
-            </div>
-          )}
           <aside className="fade-1" style={{ position: "sticky", top: "96px" }}>
             <div className="til-label" style={{ marginBottom: "16px" }}>
               Suggested users
@@ -386,7 +377,9 @@ function FeedPage() {
                               fontWeight: 500,
                             }}
                           >
-                            <Link to={`/profile/${post.user}`}>@{post.user.username}</Link>
+                            <Link to={`/profile/${post.user.id}`}>
+                              @{post.user.username}
+                            </Link>
                           </span>
                           <span className="til-category">
                             {CATEGORIES.find((c) => c.value === post.category)
