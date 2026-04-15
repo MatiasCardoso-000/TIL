@@ -1,0 +1,159 @@
+# flyctl launch added from .antigravity\extensions\github.vscode-github-actions-0.31.0-universal\.gitignore
+.antigravity\extensions\github.vscode-github-actions-0.31.0-universal\**\node_modules
+.antigravity\extensions\github.vscode-github-actions-0.31.0-universal\**\out
+.antigravity\extensions\github.vscode-github-actions-0.31.0-universal\**\dist
+.antigravity\extensions\github.vscode-github-actions-0.31.0-universal\**\*.vsix
+.antigravity\extensions\github.vscode-github-actions-0.31.0-universal\**\.DS_Store
+.antigravity\extensions\github.vscode-github-actions-0.31.0-universal\**\runners
+.antigravity\extensions\github.vscode-github-actions-0.31.0-universal\**\.yalc
+
+# flyctl launch added from .antigravity\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\_pydevd_frame_eval\.gitignore
+.antigravity\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\_pydevd_frame_eval\pydevd_frame_evaluator.*.so
+.antigravity\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\_pydevd_frame_eval\pydevd_frame_evaluator.*.pyd
+.antigravity\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\_pydevd_frame_eval\pydevd_frame_evaluator.pyx
+
+# flyctl launch added from .antigravity\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\pydevd_attach_to_process\linux_and_mac\.gitignore
+.antigravity\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\pydevd_attach_to_process\linux_and_mac\attach_x86.dylib
+.antigravity\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\pydevd_attach_to_process\linux_and_mac\attach_x86_64.dylib
+.antigravity\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\pydevd_attach_to_process\linux_and_mac\attach_linux_x86.o
+.antigravity\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\pydevd_attach_to_process\linux_and_mac\attach_linux_x86_64.o
+
+# flyctl launch added from .cache\opencode\bin\vscode-eslint\.gitignore
+.cache\opencode\bin\vscode-eslint\**\out
+.cache\opencode\bin\vscode-eslint\**\node_modules
+.cache\opencode\bin\vscode-eslint\**\npm-debug.log
+.cache\opencode\bin\vscode-eslint\**\*.vsix
+.cache\opencode\bin\vscode-eslint\**\scrapbook.js
+.cache\opencode\bin\vscode-eslint\**\*.lsif
+.cache\opencode\bin\vscode-eslint\**\*.db
+.cache\opencode\bin\vscode-eslint\**\.DS_Store
+
+# flyctl launch added from .claude\plugins\marketplaces\claude-plugins-official\.gitignore
+.claude\plugins\marketplaces\claude-plugins-official\**\*.DS_Store
+.claude\plugins\marketplaces\claude-plugins-official\**\.claude
+
+# flyctl launch added from .claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\.gitignore
+# Python
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\__pycache__
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\*.py[cod]
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\*$py.class
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\*.so
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\.Python
+
+# Virtual environments
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\venv
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\env
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\ENV
+
+# IDE
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\.vscode
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\.idea
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\*.swp
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\*.swo
+
+# OS
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\.DS_Store
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\Thumbs.db
+
+# Testing
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\.pytest_cache
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\.coverage
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\htmlcov
+
+# Local configuration (should not be committed)
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\.claude\*.local.md
+.claude\plugins\marketplaces\claude-plugins-official\plugins\hookify\**\.claude\*.local.json
+
+# flyctl launch added from .claude\plugins\marketplaces\engram\.gitignore
+# Binary (only at root, not cmd/engram/ directory)
+.claude\plugins\marketplaces\engram\engram
+.claude\plugins\marketplaces\engram\**\*.exe
+
+# Database
+.claude\plugins\marketplaces\engram\**\*.db
+.claude\plugins\marketplaces\engram\**\*.db-wal
+.claude\plugins\marketplaces\engram\**\*.db-shm
+
+# Export files
+.claude\plugins\marketplaces\engram\**\engram-export.json
+
+# OS
+.claude\plugins\marketplaces\engram\**\.DS_Store
+.claude\plugins\marketplaces\engram\**\Thumbs.db
+
+# IDE
+.claude\plugins\marketplaces\engram\**\.idea
+.claude\plugins\marketplaces\engram\**\.vscode
+.claude\plugins\marketplaces\engram\**\*.swp
+.claude\plugins\marketplaces\engram\**\*.swo
+.claude\plugins\marketplaces\engram\**\*~
+
+# AI Skills symlinks (generated by setup.sh)
+.claude\plugins\marketplaces\engram\**\.claude\skills
+.claude\plugins\marketplaces\engram\**\.codex\skills
+.claude\plugins\marketplaces\engram\**\.github\skills
+.claude\plugins\marketplaces\engram\**\.gemini\skills
+
+# flyctl launch added from .codex\.tmp\plugins\.gitignore
+# macOS system files
+.codex\.tmp\plugins\**\.DS_Store
+
+# Python bytecode files
+.codex\.tmp\plugins\**\__pycache__
+.codex\.tmp\plugins\**\*.pyc
+
+# flyctl launch added from .codex\vendor_imports\skills\.gitignore
+# macOS system files
+.codex\vendor_imports\skills\**\.DS_Store
+
+# Python bytecode files
+.codex\vendor_imports\skills\**\__pycache__
+.codex\vendor_imports\skills\**\*.pyc
+
+# flyctl launch added from .config\opencode\.gitignore
+.config\opencode\**\node_modules
+.config\opencode\**\package.json
+.config\opencode\**\bun.lock
+.config\opencode\**\.gitignore
+
+# flyctl launch added from .opencode\.gitignore
+.opencode\**\node_modules
+.opencode\**\package.json
+.opencode\**\bun.lock
+.opencode\**\.gitignore
+
+# flyctl launch added from .vscode\extensions\burkeholland.simple-react-snippets-1.2.8\.gitignore
+.vscode\extensions\burkeholland.simple-react-snippets-1.2.8\**\out
+.vscode\extensions\burkeholland.simple-react-snippets-1.2.8\**\node_modules
+
+# flyctl launch added from .vscode\extensions\mgmcdermott.vscode-language-babel-0.0.40\.gitignore
+.vscode\extensions\mgmcdermott.vscode-language-babel-0.0.40\**\.vscode\*
+.vscode\extensions\mgmcdermott.vscode-language-babel-0.0.40\**\.vscode-test-web\*
+!.vscode\extensions\mgmcdermott.vscode-language-babel-0.0.40\**\.vscode\tasks.json
+!.vscode\extensions\mgmcdermott.vscode-language-babel-0.0.40\**\.vscode\launch.json
+.vscode\extensions\mgmcdermott.vscode-language-babel-0.0.40\**\.DS_Store
+.vscode\extensions\mgmcdermott.vscode-language-babel-0.0.40\**\.vimrc
+.vscode\extensions\mgmcdermott.vscode-language-babel-0.0.40\**\tags
+.vscode\extensions\mgmcdermott.vscode-language-babel-0.0.40\**\node_modules
+.vscode\extensions\mgmcdermott.vscode-language-babel-0.0.40\**\dist
+
+# flyctl launch added from .vscode\extensions\mgmcdermott.vscode-language-babel-0.0.40\.husky\_\.gitignore
+.vscode\extensions\mgmcdermott.vscode-language-babel-0.0.40\.husky\_\**\*
+
+# flyctl launch added from .vscode\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\_pydevd_frame_eval\.gitignore
+.vscode\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\_pydevd_frame_eval\pydevd_frame_evaluator.*.so
+.vscode\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\_pydevd_frame_eval\pydevd_frame_evaluator.*.pyd
+.vscode\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\_pydevd_frame_eval\pydevd_frame_evaluator.pyx
+
+# flyctl launch added from .vscode\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\pydevd_attach_to_process\linux_and_mac\.gitignore
+.vscode\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\pydevd_attach_to_process\linux_and_mac\attach_x86.dylib
+.vscode\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\pydevd_attach_to_process\linux_and_mac\attach_x86_64.dylib
+.vscode\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\pydevd_attach_to_process\linux_and_mac\attach_linux_x86.o
+.vscode\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy\_vendored\pydevd\pydevd_attach_to_process\linux_and_mac\attach_linux_x86_64.o
+
+# flyctl launch added from AppData\Local\Programs\Antigravity\resources\app\extensions\terminal-suggest\.gitignore
+AppData\Local\Programs\Antigravity\resources\app\extensions\terminal-suggest\**\third_party
+
+# flyctl launch added from AppData\Local\Programs\Microsoft VS Code\41dd792b5e\resources\app\extensions\terminal-suggest\.gitignore
+AppData\Local\Programs\Microsoft VS Code\41dd792b5e\resources\app\extensions\terminal-suggest\**\third_party
+fly.toml
