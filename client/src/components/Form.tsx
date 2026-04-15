@@ -72,14 +72,6 @@ export default function Form() {
 
       <div
         style={{
-          height: "1px",
-          background: "var(--border)",
-          margin: "12px 0",
-        }}
-      />
-
-      <div
-        style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",

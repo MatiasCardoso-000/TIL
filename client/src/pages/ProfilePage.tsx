@@ -135,7 +135,7 @@ export default function ProfilePage() {
                     className="profile-avatar"
                     src={
                       editForm.avatarUrl ||
-                      `https://ui-avatars.com/api/?name=${editForm.username || user?.username}&background=e8c547&color=0b0b0f`
+                      `https://ui-avatars.com/api/?name=${editForm.username || user?.username}&background=ffffff&color=000000`
                     }
                     alt={editForm.username}
                   />
@@ -283,7 +283,7 @@ export default function ProfilePage() {
                         className="profile-avatar"
                         src={
                           user?.avatarUrl ||
-                          `https://ui-avatars.com/api/?name=${user?.username}&background=e8c547&color=0b0b0f`
+                          `https://ui-avatars.com/api/?name=${user?.username}&background=ffffff&color=000000`
                         }
                         alt={user?.username}
                       />

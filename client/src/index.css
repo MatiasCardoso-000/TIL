@@ -309,7 +309,6 @@ body {
   background-color: var(--bg-base);
   background-image: radial-gradient(circle at 1px 1px, var(--feed-dot) 1px, transparent 0);
   background-size: 28px 28px;
-  transition: background-color 0.3s ease;
 }
 
 .auth-theme-btn {
@@ -516,7 +515,6 @@ body {
   background-color: var(--bg-base);
   background-image: radial-gradient(circle at 1px 1px, var(--feed-dot) 1px, transparent 0);
   background-size: 28px 28px;
-  transition: background-color 0.3s ease;
 }
 
 .til-label {
@@ -807,7 +805,7 @@ body {
   height: 80px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--accent);
+  border: 2px solid var(--text-primary);
   transition: border-color 0.3s ease;
 }
 

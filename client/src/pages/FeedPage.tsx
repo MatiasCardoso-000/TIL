@@ -211,7 +211,7 @@ function FeedPage() {
                                 borderRadius: "999px",
                                 objectFit: "cover",
                                 flexShrink: 0,
-                                border: "1px solid var(--border)",
+                                border: "1px solid var(--text-primary)",
                               }}
                             />
                           ) : (
@@ -224,10 +224,9 @@ function FeedPage() {
                                 display: "grid",
                                 placeItems: "center",
                                 flexShrink: 0,
-                                border: "1px solid var(--border)",
-                                background:
-                                  "var(--surface, rgba(255,255,255,0.04))",
-                                color: "var(--text-secondary)",
+                                border: "1px solid var(--text-primary)",
+                                background: "#ffffff",
+                                color: "#000000",
                                 fontFamily: "'DM Sans', sans-serif",
                                 fontSize: "13px",
                                 fontWeight: 700,
@@ -308,14 +307,6 @@ function FeedPage() {
             <div style={{ marginBottom: "40px" }}>
               <div className="til-label">Nueva entrada</div>
               <Form />
-              <div
-                aria-hidden="true"
-                style={{
-                  height: "1px",
-                  background: "var(--border)",
-                  marginBottom: "16px",
-                }}
-              />
             </div>
 
             {/* Feed */}
